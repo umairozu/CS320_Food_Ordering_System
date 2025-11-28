@@ -7,7 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class UserDataAccess extends UserData {
-    public static boolean addNewCustomer(User user){
+    public boolean addNewCustomer(User user){
         final String sql = "INSERT INTO User (username, password, user_type) VALUES (?, ?, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -23,7 +23,7 @@ public class UserDataAccess extends UserData {
         }
         return false;
     }
-    public static User getUserByEmail(String email) {
+    public User getUserByEmail(String email) {
         final String sql = "SELECT user_id, password, user_type FROM User WHERE email = ?";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -49,7 +49,7 @@ public class UserDataAccess extends UserData {
         }
         return null;
     }
-    public static boolean changeUserPassword(User user, String newHashedPassword){
+    public boolean changeUserPassword(User user, String newHashedPassword){
         int userId = user.getUserID();
         final String sql = "UPDATE User SET password = ? WHERE user_id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -64,7 +64,7 @@ public class UserDataAccess extends UserData {
         }
     }
 
-    public static ArrayList<Card> fetchCustomerCards(Customer customer) {
+    public ArrayList<Card> fetchCustomerCards(Customer customer) {
         int customerId = customer.getUserID();
         ArrayList<Card> cards = new ArrayList<>();
         final String sql = "SELECT card_no, expiry_date, cardholder_name FROM Card WHERE customer_id = ?";
@@ -86,7 +86,7 @@ public class UserDataAccess extends UserData {
         }
         return cards;
     }
-    public static boolean addCardToCustomer(Customer customer, Card card) {
+    public boolean addCardToCustomer(Customer customer, Card card) {
         int customerId = customer.getUserID();
         final String sql = "INSERT INTO Card (customer_id, card_no, expiry_date, cardholder_name) VALUES (?, ?, ?, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -102,7 +102,7 @@ public class UserDataAccess extends UserData {
             return false;
         }
     }
-    public static ArrayList<Address> fetchCustomerAddresses(Customer customer) {
+    public ArrayList<Address> fetchCustomerAddresses(Customer customer) {
         int customerId = customer.getUserID();
         ArrayList<Address> addresses = new ArrayList<>();
         final String sql = "SELECT address_line, city, state, zip_code FROM Address WHERE customer_id = ?";
@@ -125,7 +125,7 @@ public class UserDataAccess extends UserData {
         }
         return addresses;
     }
-    public static boolean addAddress(Customer customer, Address address) {
+    public boolean addAddress(Customer customer, Address address) {
         int customerId = customer.getUserID();
         final String sql = "INSERT INTO Address (customer_id, address_line, city, state, zip_code) VALUES (?, ?, ?, ?, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -162,7 +162,7 @@ public class UserDataAccess extends UserData {
         }
         return phoneNumbers;
     }
-    public static boolean addPhoneNumber(Customer customer, String phoneNumber) {
+    public boolean addPhoneNumber(Customer customer, String phoneNumber) {
         int customerId = customer.getUserID();
         final String sql = "INSERT INTO PhoneNumber (customer_id, phone_number) VALUES (?, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -176,51 +176,100 @@ public class UserDataAccess extends UserData {
             return false;
         }
     }
-    public static ArrayList<Order> fetchCustomerOrders(Customer customer) {
+    public ArrayList<Order> fetchCustomerOrders(Customer customer, ArrayList<Restaurant> restaurants) {
         int customerId = customer.getUserID();
         ArrayList<Order> orders = new ArrayList<>();
-        final String sql = "SELECT order_id, order_date, total_amount FROM Orders WHERE customer_id = ?";
+        String sql = "SELECT o.order_id, o.order_date, o.status, r.restaurant_id as restaurant_id, \n" +
+                "                       a.address_id,\n" +
+                "                       rt.rating, rt.comment\n" +
+                "                FROM Order o\n" +
+                "                JOIN Restaurant r ON o.restaurant_id = r.restaurant_id\n" +
+                "                JOIN Address a ON o.delivery_address_id = a.address_id\n" +
+                "                LEFT JOIN Rating rt ON o.order_id = rt.cart_id\n" +
+                "                WHERE o.customer_id = ?\n" +
+                "                GROUP BY o.order_id, o.order_date, o.status, r.name, rt.rating, rt.comment\n" +
+                "                ORDER BY o.order_date DESC";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, customerId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    int orderId = resultSet.getInt("order_id");
-                    Date orderDate = resultSet.getDate("order_date");
-                    double totalAmount = resultSet.getDouble("total_amount");
-                    orders.add(new Order(orderId, orderDate, totalAmount));
+                    int order_id = resultSet.getInt("order_id");
+                    Date date = resultSet.getDate("order_date");
+                    OrderStatus status = OrderStatus.valueOf(resultSet.getString("status"));
+                    int restaurantId = resultSet.getInt("restaurant_id");
+                    Rating rating = new Rating(resultSet.getObject("rating") != null ? resultSet.getInt("rating") : null, resultSet.getString("comment"));
+                    int addressId = resultSet.getInt("address_id");
+                    Address deliveryAddress = new Address();
+                    for (Address address : customer.getAddresses()) {
+                        if (address.getAddressID() == addressId) {
+                            deliveryAddress = address;
+                            break;
+                        }
+                    }
+                    String restaurantName = "";
+                    ArrayList<CartItem> items = new ArrayList<>();
+                    sql = "SELECT mi.menu_item_id, oi.quantity" +
+                            "FROM OrderItem oi " +
+                            "JOIN MenuItem mi ON oi.menu_item_id = mi.menu_item_id " +
+                            "WHERE oi.order_id = ?";
+                    try (PreparedStatement itemStatement = connection.prepareStatement(sql)) {
+                        itemStatement.setInt(1, order_id);
+                        try (ResultSet itemResultSet = itemStatement.executeQuery()) {
+                            int menuItemId = itemResultSet.getInt("menu_item_id");
+                            for (Restaurant restaurant : restaurants) {
+                                if (restaurant.getRestaurantID() == restaurantId) {
+                                    restaurantName = restaurant.getName();
+                                    break;
+                                    for (MenuItem menuItem : restaurant.getMenu()) {
+                                        if (menuItem.getMenuItemID() == menuItemId) {
+                                            int quantity = itemResultSet.getInt("quantity");
+                                            items.add(new CartItem(menuItem, quantity));
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        orders.add(new Order(deliveryAddress, items, date, status, restaurantName, order_id, rating));
+                    }
+                } catch(SQLException e){
+                    System.out.println("No orders found for the customer");
                 }
             } catch (SQLException e) {
-                System.out.println("No orders found for the customer");
+                System.out.println("Database failed to fetch customer orders");
             }
+            return orders;
         } catch (SQLException e) {
-            System.out.println("Database failed to fetch customer orders");
+            throw new RuntimeException(e);
         }
-        return orders;
     }
-    public static Order insertCustomerOrder(Customer customer, Order order) {
+    public boolean insertCustomerOrder(Customer customer, Order order, Restaurant restaurant) {
         int customerId = customer.getUserID();
-        final String sql = "INSERT INTO Orders (customer_id, order_date) VALUES (?, ?)";
+        int restaurantId = restaurant.getRestaurantID();
+        int deliveryAddressId = order.getDeliveryAddress().getAddressID();
+        final String sql = "INSERT INTO Orders (customer_id, order_date, restaurant_id, delivery_address_id) VALUES (?, ?, ?, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, customerId);
-            Date date = new Date(System.currentTimeMillis());
-            statement.setDate(2, date);
+            statement.setDate(2, new Date(order.getCreationDate().getTime()));
+            statement.setInt(3, restaurantId);
+            statement.setInt(4, deliveryAddressId);
             int rowsAffected = statement.executeUpdate();
             if (rowsAffected > 0) {
                 try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         int orderId = generatedKeys.getInt(1);
                         order.setOrderID(orderId);
-                        order.setDate(date);
-                        return order;
+                        customer.getOrders().add(order);
+                        return true;
                     }
                 }
             }
         } catch (SQLException e) {
             System.out.println("Database failed to add order to customer");
         }
-        return null;
+        return false;
     }
 
 }

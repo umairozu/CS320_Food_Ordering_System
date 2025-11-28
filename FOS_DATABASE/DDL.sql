@@ -61,18 +61,11 @@ CREATE TABLE MenuItem (
     item_name VARCHAR(100) NOT NULL,
     description TEXT,
     price DECIMAL(10,2) NOT NULL CHECK (price >= 0),
-    image VARCHAR(255),
     FOREIGN KEY (restaurant_id) REFERENCES Restaurant(restaurant_id) ON DELETE CASCADE
 );
 
-CREATE TABLE Cart (
-    cart_id INT AUTO_INCREMENT PRIMARY KEY,
-    customer_id INT NOT NULL,
-    FOREIGN KEY (customer_id) REFERENCES User(user_id) ON DELETE CASCADE
-);
-
 CREATE TABLE CartItem (
-    cart_id INT NOT NULL,
+    order_id INT,
     menu_item_id INT NOT NULL,
     quantity INT NOT NULL CHECK (quantity > 0),
     PRIMARY KEY (cart_id, menu_item_id),
@@ -84,7 +77,7 @@ CREATE TABLE `Order` (
     order_id INT AUTO_INCREMENT PRIMARY KEY,
     customer_id INT NOT NULL,
     restaurant_id INT NOT NULL,
-    order_status ENUM('pending', 'preparing', 'sent', 'accepted') NOT NULL,
+    order_status ENUM('pending', 'preparing', 'sent', 'delivered') NOT NULL default 'preparing',
     order_date DATETIME NOT NULL,
     delivery_address_id INT NOT NULL,
     FOREIGN KEY (delivery_address) REFERENCES User(user_id) ON DELETE CASCADE,
@@ -103,7 +96,6 @@ CREATE TABLE OrderItem (
 );
 
 CREATE TABLE Rating (
-    customer_id INT NOT NULL,
     order_id INT NOT NULL,
     rating_value INT NOT NULL CHECK (rating_value BETWEEN 1 AND 5),
     review_text TEXT,

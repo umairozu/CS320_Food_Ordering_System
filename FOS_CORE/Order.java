@@ -10,15 +10,26 @@ public class Order {
     private Rating rating;
     private Address deliveryAddress;
     private ArrayList<CartItem> items;
+    private String restaurantName;
+
 
     public Order() { } // this will be used for the DAO
 
-    public Order(int orderID, Address deliveryAddress, ArrayList<CartItem> items) {
-        this.orderID = orderID;
+    public Order(Address deliveryAddress, ArrayList<CartItem> items, String restaurantName) {
         this.deliveryAddress = deliveryAddress;
         this.creationDate = new Date(System.currentTimeMillis());
         this.items = items;
         this.status = OrderStatus.PENDING;
+        this.restaurantName = restaurantName;
+    }
+    public Order(Address deliveryAddress, ArrayList<CartItem> items, Date date, OrderStatus status, String restaurantName, int orderID, Rating rating) {
+        this.deliveryAddress = deliveryAddress;
+        this.creationDate = date;
+        this.items = items;
+        this.status = status;
+        this.restaurantName = restaurantName;
+        this.orderID = orderID;
+        this.rating = rating;
     }
 
     public int getOrderID() {
@@ -59,5 +70,9 @@ public class Order {
 
     public void setDate(Date date) {
         this.creationDate = date;
+    }
+
+    public int getRestaurantID(){
+
     }
 }

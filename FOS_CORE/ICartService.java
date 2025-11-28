@@ -1,7 +1,6 @@
 package FOS_CORE;
 
 public interface ICartService {
-    void addToCart(Cart cart, MenuItem item, int quantity);
-    void updateCartItem(Cart cart, MenuItem item, int newQuantity);
-    Cart getCart(Customer customer);
+    void addToCart(Customer customer, MenuItem item, int quantity);
+    void updateCartItem(Customer customer, MenuItem item, int newQuantity);
 }

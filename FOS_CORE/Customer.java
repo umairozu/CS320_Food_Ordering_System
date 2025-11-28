@@ -13,6 +13,7 @@ public class Customer extends User {
     private ArrayList<Order> orders;
     private ArrayList<Card> cards;
     private final UserData userData = new UserDataAccess();
+    private ArrayList<CartItem> cart;
 
     public Customer() { }
 
@@ -30,5 +31,25 @@ public class Customer extends User {
 
     public void addPhoneNumber(String phoneNumber) {
         this.phoneNumbers.add(phoneNumber);
+    }
+
+    public ArrayList<Address> getAddresses() {
+        return addresses;
+    }
+
+    public ArrayList<Order> getOrders() {
+        return orders;
+    }
+
+    public ArrayList<Card> getCards() {
+        return cards;
+    }
+
+    public UserData getUserData() {
+        return userData;
+    }
+
+    public ArrayList<CartItem> getCart() {
+        return cart;
     }
 }
