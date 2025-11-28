@@ -12,12 +12,13 @@ public class Customer extends User {
     private ArrayList<Address> addresses;
     private ArrayList<Order> orders;
     private ArrayList<Card> cards;
+    private final UserData userData = new UserDataAccess();
 
     public Customer() { }
 
     public Customer(int userID, String email, String passwordHash) {
         super(userID, email, passwordHash);
-        this.phoneNumbers = UserDataAccess.fetchCustomerPhoneNumbers(this);
+        this.phoneNumbers = userData.fetchCustomerPhoneNumbers(this);
         this.addresses = UserDataAccess.fetchCustomerAddresses(this);
         this.orders = UserDataAccess.fetchCustomerOrders(this);
         this.cards = UserDataAccess.fetchCustomerCards(this);

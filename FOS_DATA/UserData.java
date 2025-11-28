@@ -1,8 +1,6 @@
 package FOS_DATA;
 
-import FOS_CORE.Customer;
-import FOS_CORE.Manager;
-import FOS_CORE.User;
+import FOS_CORE.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,5 +21,5 @@ public abstract class UserData {
     abstract ArrayList<String> fetchCustomerPhoneNumbers(Customer customer);
     abstract boolean addPhoneNumber(Customer customer, String phoneNumber);
     abstract ArrayList<Order> fetchCustomerOrders(Customer customer);
-    abstract boolean insertCustomerOrder(Customer customer, Order order);
+    abstract Order insertCustomerOrder(Customer customer, Order order);
 }

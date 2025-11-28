@@ -142,7 +142,7 @@ public class UserDataAccess extends UserData {
             return false;
         }
     }
-    public static ArrayList<String> fetchCustomerPhoneNumbers(Customer customer) {
+    public ArrayList<String> fetchCustomerPhoneNumbers(Customer customer) {
         int customerId = customer.getUserID();
         ArrayList<String> phoneNumbers = new ArrayList<>();
         final String sql = "SELECT phone_number FROM PhoneNumber WHERE customer_id = ?";
@@ -198,20 +198,29 @@ public class UserDataAccess extends UserData {
         }
         return orders;
     }
-    public static boolean insertCustomerOrder(Customer customer, Order order) {
+    public static Order insertCustomerOrder(Customer customer, Order order) {
         int customerId = customer.getUserID();
-        final String sql = "INSERT INTO Orders (customer_id, order_date, total_amount) VALUES (?, ?, ?)";
+        final String sql = "INSERT INTO Orders (customer_id, order_date) VALUES (?, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, customerId);
-            statement.setDate(2, new java.sql.Date(order.getOrderDate().getTime()));
-            statement.setDouble(3, order.getTotalAmount());
+            Date date = new Date(System.currentTimeMillis());
+            statement.setDate(2, date);
             int rowsAffected = statement.executeUpdate();
-            return rowsAffected > 0;
+            if (rowsAffected > 0) {
+                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int orderId = generatedKeys.getInt(1);
+                        order.setOrderID(orderId);
+                        order.setDate(date);
+                        return order;
+                    }
+                }
+            }
         } catch (SQLException e) {
             System.out.println("Database failed to add order to customer");
-            return false;
         }
+        return null;
     }
 
 }

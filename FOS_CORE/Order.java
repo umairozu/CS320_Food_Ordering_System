@@ -1,28 +1,23 @@
 package FOS_CORE;
 
-import java.util.Date;
-import java.util.List;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class Order {
     private int orderID;
     private OrderStatus status;
-    private Date timestamp;
-    private double totalAmount;
-    private int rating;
-    private String reviewComment;
-
-    // The following attributes were not implemented in the figiure
-    private Customer customer;
+    private Date creationDate;
+    private Rating rating;
     private Address deliveryAddress;
-    private List<CartItem> items = new ArrayList<>();
+    private ArrayList<CartItem> items;
 
     public Order() { } // this will be used for the DAO
 
-    public Order(int orderID, Customer customer, Address deliveryAddress) {
+    public Order(int orderID, Address deliveryAddress, ArrayList<CartItem> items) {
         this.orderID = orderID;
-        this.customer = customer;
         this.deliveryAddress = deliveryAddress;
+        this.creationDate = new Date(System.currentTimeMillis());
+        this.items = items;
         this.status = OrderStatus.PENDING;
     }
 
@@ -42,48 +37,27 @@ public class Order {
         this.status = status;
     }
 
-    public double getEstimatedAmount() {
-        return estimatedAmount;
+    public void setRating(Rating rating) {
+        this.rating = rating;
     }
 
-    public void setEstimatedAmount(double estimatedAmount) {
-        this.estimatedAmount = estimatedAmount;
+    public Date getCreationDate() {
+        return creationDate;
     }
-    public Integer getRating() {
+
+    public Rating getRating() {
         return rating;
-    }
-
-    public String getReviewComment() {
-        return reviewComment;
-    }
-
-    public Customer getCustomer() {
-        return customer;
     }
 
     public Address getDeliveryAddress() {
         return deliveryAddress;
     }
 
-    public List<CartItem> getItems() {
+    public ArrayList<CartItem> getItems() {
         return items;
     }
 
-    public void addItem(CartItem item) {
-        items.add(item);
-    }
-
-    public double calculateOrderTotal() {
-        // TODO calculate the total value for the order.
-        return 0;
-    }
-
-    public void rateOrder(int rating, String comment) {
-        this.rating = rating;
-        this.reviewComment = comment;
-    }
-
-    public boolean validateOrder() {
-        return customer != null && deliveryAddress != null && !items.isEmpty();
+    public void setDate(Date date) {
+        this.creationDate = date;
     }
 }
