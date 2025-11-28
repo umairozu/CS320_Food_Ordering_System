@@ -2,15 +2,15 @@
 USE food_ordering_system;
 
 -- Insert Users (3 Managers, 5 Customers)
-INSERT INTO User (email, password, user_type) VALUES
-('manager.1@gmail.com', '$2a$10$7tPkODJIS/0IENdIh1fCOusytjGgcjep/U2sPphzDgoEagTvLG0Ra', 'manager'),
-('manager.2@gmail.com', '$2a$10$iPSOSNT0LRdxLPTtpZZGPexnUS3Fs9lNbyxOrbcLwMSsjzHEfVPQa', 'manager'),
-('manager.3@gmail.com', '$2a$10$Ud7q.ZXvKF1p0C4w6Pp12OO6xaDz7/iJbeZbDjdo0zAu2b6903MRu', 'manager'),
-('customer.1@gmail.com', '$2a$10$QYjRugyWC3sHYEqJCljG8OsPiCEMFNb4IPdtj/o9MPyW6zFbWrAP6', 'customer'),
-('customer.2@gmail.com', '$2a$10$4KqLI5nNNpPlP4fdOSVljeKCVtsxOZyjtb/kAKCw0MnrTFYuoqYVa', 'customer'),
-('customer.3@gmail.com', '$2a$10$q/wuVA4yA5uz18aqRoTc5edVffPSiAOLbraJAkLB4liyu42dFkkiW', 'customer'),
-('customer.4@gmail.com', '$2a$10$K8Isy/sdmnCMoOyvBy3KA.IWswaLD7GWWywbG.HOD2fpzOYch3lqG', 'customer'),
-('customer.5@gmail.com', '$2a$10$JljDtMj78ZS8LsGo.EP0buhDVri0uwQS7lpvsSUOKcvfn3k8GKVve', 'customer');
+INSERT INTO User (username, password, user_type) VALUES
+('manager1', 'scrypt:32768:8:1$7IdM7QMQWaP9H4VY$aafffed24c0189ed01225db105d71cf17ec3c92f99ebb657f379d5b9e9645798005ecc7b21e63f78f2551ecc5b94c571ed695f9f7a82f0d32111bec29b261ff2', 'manager'),
+('manager2', 'scrypt:32768:8:1$YKoHwGuGKfZj2sCK$dda5da6853b60a1d9fff38cb56347019d0fcddb82874c49b41fa5f519e523740c72d32bc49a706bb373cd8021bf8415768d23a16347fd2c0fd19931bb5791c74', 'manager'),
+('manager3', 'scrypt:32768:8:1$YKoHwGuGKfZj2sCK$dda5da6853b60a1d9fff38cb56347019d0fcddb82874c49b41fa5f519e523740c72d32bc49a706bb373cd8021bf8415768d23a16347fd2c0fd19931bb5791c74', 'manager'),
+('customer1', 'scrypt:32768:8:1$YKoHwGuGKfZj2sCK$dda5da6853b60a1d9fff38cb56347019d0fcddb82874c49b41fa5f519e523740c72d32bc49a706bb373cd8021bf8415768d23a16347fd2c0fd19931bb5791c74', 'customer'),
+('customer2', 'hashed_password5', 'customer'),
+('customer3', 'hashed_password6', 'customer'),
+('customer4', 'hashed_password7', 'customer'),
+('customer5', 'hashed_password8', 'customer');
 
 -- Insert Addresses
 INSERT INTO Address (user_id, address_line1, city) VALUES

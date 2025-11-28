@@ -5,7 +5,7 @@ import java.util.List;
 public class AccountService implements IAccountService {
 
     @Override
-    public Customer createCustomerAccount(String email, String phone, String password, String address) {
+    public Customer createCustomerAccount(String email, String phone, String password) {
         // TODO: Implementation
         return null;
     }
@@ -21,7 +21,7 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public Address addAddress(Customer customer, String address) {
+    public boolean addAddress(Customer customer, Address address) {
         // TODO: Implementation
         return null;
     }

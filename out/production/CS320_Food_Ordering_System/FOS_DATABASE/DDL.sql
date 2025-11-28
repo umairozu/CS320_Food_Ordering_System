@@ -4,7 +4,7 @@ USE food_ordering_system;
 
 CREATE TABLE User (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(50) UNIQUE NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(400) NOT NULL,
     user_type ENUM('customer', 'manager') NOT NULL
 );

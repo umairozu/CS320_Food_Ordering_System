@@ -1,24 +1,24 @@
 package FOS_CORE;
 
-public abstract class User {
+public class User {
 
-    protected String userID;
+    protected int userID;
     protected String email;
     protected String passwordHash;
 
     public User() { }
 
-    public User(String userID, String email, String passwordHash) {
+    public User(int userID, String email, String passwordHash) {
         this.userID = userID;
         this.email = email;
         this.passwordHash = passwordHash;
     }
 
-    public String getUserID() {
+    public int getUserID() {
         return userID;
     }
 
-    public void setUserID(String userID) {
+    public void setUserID(int userID) {
         this.userID = userID;
     }
 

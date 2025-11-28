@@ -4,7 +4,7 @@ public class Manager extends User {
 
     public Manager() { }
 
-    public Manager(String userID, String email, String passwordHash) {
+    public Manager(int userID, String email, String passwordHash) {
         super(userID, email, passwordHash);
     }
 }
