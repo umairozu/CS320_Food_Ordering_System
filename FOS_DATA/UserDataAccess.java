@@ -1,8 +1,6 @@
 package FOS_DATA;
 
-import FOS_CORE.Customer;
-import FOS_CORE.Manager;
-import FOS_CORE.User;
+import FOS_CORE.*;
 
 import java.awt.*;
 import java.sql.*;
@@ -66,7 +64,6 @@ public class UserDataAccess extends UserData {
         }
     }
 
-    @Override
     public static ArrayList<Card> fetchCustomerCards(Customer customer) {
         int customerId = customer.getUserID();
         ArrayList<Card> cards = new ArrayList<>();
@@ -200,6 +197,21 @@ public class UserDataAccess extends UserData {
             System.out.println("Database failed to fetch customer orders");
         }
         return orders;
+    }
+    public static boolean insertCustomerOrder(Customer customer, Order order) {
+        int customerId = customer.getUserID();
+        final String sql = "INSERT INTO Orders (customer_id, order_date, total_amount) VALUES (?, ?, ?)";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, customerId);
+            statement.setDate(2, new java.sql.Date(order.getOrderDate().getTime()));
+            statement.setDouble(3, order.getTotalAmount());
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Database failed to add order to customer");
+            return false;
+        }
     }
 
 }

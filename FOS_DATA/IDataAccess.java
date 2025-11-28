@@ -3,10 +3,7 @@ package FOS_DATA;
 import java.awt.*;
 import java.util.ArrayList;
 
-import FOS_CORE.Customer;
-import FOS_CORE.Manager;
-import FOS_CORE.User;
-import FOS_DATA.DatabaseConnection;
+import FOS_CORE.*;
 import java.sql.*;
 
 public interface IDataAccess {

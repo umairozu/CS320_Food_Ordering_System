@@ -10,13 +10,12 @@ CREATE TABLE User (
 );
 
 CREATE TABLE Address (
+	address_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    address_line1 VARCHAR(100) NOT NULL,
-    address_line2 VARCHAR(100),
+    address_line VARCHAR(100) NOT NULL,
     city VARCHAR(50) NOT NULL,
     state VARCHAR(50),
     zip VARCHAR(10),
-    PRIMARY KEY (user_id, address_line1),
     FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
 );
 
@@ -87,8 +86,11 @@ CREATE TABLE `Order` (
     restaurant_id INT NOT NULL,
     order_status ENUM('pending', 'preparing', 'sent', 'accepted') NOT NULL,
     order_date DATETIME NOT NULL,
+    delivery_address_id INT NOT NULL,
+    FOREIGN KEY (delivery_address) REFERENCES User(user_id) ON DELETE CASCADE,
     FOREIGN KEY (customer_id) REFERENCES User(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (restaurant_id) REFERENCES Restaurant(restaurant_id) ON DELETE CASCADE
+    FOREIGN KEY (restaurant_id) REFERENCES Restaurant(restaurant_id) ON DELETE CASCADE,
+    FOREIGN KEY (delivery_address_id) REFERENCES Address(address_id) ON DELETE CASCADE
 );
 
 CREATE TABLE OrderItem (

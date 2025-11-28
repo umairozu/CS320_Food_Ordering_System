@@ -13,7 +13,7 @@ INSERT INTO User (email, password, user_type) VALUES
 ('customer.5@gmail.com', '$2a$10$JljDtMj78ZS8LsGo.EP0buhDVri0uwQS7lpvsSUOKcvfn3k8GKVve', 'customer');
 
 -- Insert Addresses
-INSERT INTO Address (user_id, address_line1, city) VALUES
+INSERT INTO Address (user_id, address_line, city) VALUES
 (1, '123 Manager St', 'Istanbul'),
 (2, '456 Manager Ave', 'Istanbul'),
 (3, '789 Manager Rd', 'Ankara'),

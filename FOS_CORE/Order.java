@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class Order {
-    private int orderId;
+    private int orderID;
     private OrderStatus status;
     private Date timestamp;
     private double totalAmount;
