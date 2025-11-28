@@ -6,7 +6,7 @@ public class Customer extends User {
 
     public Customer() { }
 
-    public Customer(String userID, String email, String passwordHash, String phoneNumber) {
+    public Customer(int userID, String email, String passwordHash, String phoneNumber) {
         super(userID, email, passwordHash);
         this.phoneNumber = phoneNumber;
     }
