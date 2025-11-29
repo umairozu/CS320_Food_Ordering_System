@@ -72,7 +72,7 @@ public class Order {
         this.creationDate = date;
     }
 
-    public int getRestaurantID(){
-
+    public String getRestaurantName() {
+        return restaurantName;
     }
 }

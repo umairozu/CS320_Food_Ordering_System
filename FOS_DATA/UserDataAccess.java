@@ -67,7 +67,7 @@ public class UserDataAccess extends UserData {
     public ArrayList<Card> fetchCustomerCards(Customer customer) {
         int customerId = customer.getUserID();
         ArrayList<Card> cards = new ArrayList<>();
-        final String sql = "SELECT card_no, expiry_date, cardholder_name FROM Card WHERE customer_id = ?";
+        final String sql = "SELECT card_no, expiry_date, cardholder_name, cvv FROM Card WHERE customer_id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, customerId);
@@ -76,7 +76,8 @@ public class UserDataAccess extends UserData {
                     String cardNo = resultSet.getString("card_no");
                     String expiryDate = resultSet.getString("expiry_date");
                     String cardholderName = resultSet.getString("cardholder_name");
-                    cards.add(new Card(cardNo, expiryDate, cardholderName));
+                    int cvv = resultSet.getInt("cvv");
+                    cards.add(new Card(cardNo, expiryDate, cardholderName, cvv));
                 }
             } catch (SQLException e) {
                 System.out.println("No cards found for the customer");
@@ -88,13 +89,14 @@ public class UserDataAccess extends UserData {
     }
     public boolean addCardToCustomer(Customer customer, Card card) {
         int customerId = customer.getUserID();
-        final String sql = "INSERT INTO Card (customer_id, card_no, expiry_date, cardholder_name) VALUES (?, ?, ?, ?)";
+        final String sql = "INSERT INTO Card (customer_id, card_no, expiry_date, cardholder_name, cvv) VALUES (?, ?, ?, ?, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, customerId);
             statement.setString(2, card.getCardNo());
             statement.setString(3, card.getExpiryDate());
             statement.setString(4, card.getCardholderName());
+            statement.setInt(5, card.getCvv());
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -105,17 +107,18 @@ public class UserDataAccess extends UserData {
     public ArrayList<Address> fetchCustomerAddresses(Customer customer) {
         int customerId = customer.getUserID();
         ArrayList<Address> addresses = new ArrayList<>();
-        final String sql = "SELECT address_line, city, state, zip_code FROM Address WHERE customer_id = ?";
+        final String sql = "SELECT address_id, address_line, city, state, zip_code FROM Address WHERE customer_id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, customerId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
+                    int addressId = resultSet.getInt("address_id");
                     String addressLine = resultSet.getString("address_line");
                     String city = resultSet.getString("city");
                     String state = resultSet.getString("state");
                     String zipCode = resultSet.getString("zip_code");
-                    addresses.add(new Address(addressLine, city, state, zipCode));
+                    addresses.add(new Address(addressId, addressLine, city, state, zipCode));
                 }
             } catch (SQLException e) {
                 System.out.println("No addresses found for the customer");

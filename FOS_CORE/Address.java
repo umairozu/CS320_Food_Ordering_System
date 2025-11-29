@@ -5,16 +5,16 @@ public class Address {
     private String addressLine;
     private String city;
     private String state;
-    private String zip;
+    private String zipCode;
 
     public Address(){ }
 
-    public Address(int addressID, String addressLine, String city, String state, String zip){
+    public Address(int addressID, String addressLine, String city, String state, String zipCode){
         this.addressID = addressID;
         this.addressLine = addressLine;
         this.city = city;
         this.state = state;
-        this.zip = zip;
+        this.zipCode = zipCode;
     }
 
     public int getAddressID() {
@@ -49,11 +49,11 @@ public class Address {
         this.state = state;
     }
 
-    public String getZip() {
-        return zip;
+    public String getZipCode() {
+        return zipCode;
     }
 
-    public void setZip(String zip) {
-        this.zip = zip;
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
     }
 }

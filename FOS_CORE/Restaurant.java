@@ -11,7 +11,7 @@ public class Restaurant {
     private Manager managerID;
     private String cuisineType;
     private String city;
-    private ArrayList<MenuItem> menuItems = new ArrayList<>();
+    private ArrayList<MenuItem> menu;
 
     public Restaurant(){ }
 
@@ -22,8 +22,8 @@ public class Restaurant {
         this.city = city;
     }
 
-    public ArrayList<MenuItem> getMenuItems(){
-        return menuItems;
+    public ArrayList<MenuItem> getMenu(){
+        return menu;
     }
 
     public int getRestaurantID() {
