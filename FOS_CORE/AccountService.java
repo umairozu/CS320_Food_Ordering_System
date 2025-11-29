@@ -17,33 +17,37 @@ public class AccountService implements IAccountService {
     //Working on it : Mohamed Khaled Becetti
     @Override
     public void changePassword(User user, String newPassword) {
-        // TODO: Implementation
-
+        DB.changeUserPassword(user,newPassword);
     }
     //Working on it : Mohamed Khaled Becetti
     @Override
     public void updateContactInfo(Customer customer, String phone) {
-        // TODO: Implementation
+        // function yet to be implemented by the DATA package interface Not found in the API
     }
     //Working on it : Mohamed Khaled Becetti
     @Override
     public boolean addAddress(Customer customer, Address address) {
-        // TODO: Implementation
-        return true;
+        // function yet to be implemented by the DATA package interface Not found in the API
+        return false;
     }
     //Working on it : Mohamed Khaled Becetti
     @Override
     public List<Address> getAddresses(Customer customer) {
-        // TODO: Implementation
-        return null;
+        return DB.fetchCustomerAddresses(customer);
     }
     //Working on it : Mohamed Khaled Becetti
     private boolean validateEmailFormat(String email) {
-        // TODO: Implementation
-        return false;
+        if (email==null || email.trim().equals("")) {return false;}//empty string
+        String prefix= email.substring(0, email.indexOf("@")).trim(); // prefix@suffix
+        String suffix = email.substring(email.indexOf("@")+1).trim();
+        if(prefix.length()==0 || suffix.length()==0) {return false;}//empty preffix or suffix
+        if(prefix.contains(" ")||suffix.contains(" ")) {return false;}//space not allowed in between suffix or prefix
+        if(prefix.contains("@#$%^%^&*()-=\\") ||suffix.contains("@#$%^%^&*()-=\\")) {return false;} // invalid characters for the email
+
+        return true;
     }
     //Working on it : Mohamed Khaled Becetti
-    private void saveCustomer(Customer customer) {
-        // TODO: Implementation
-    }
+    //private void saveCustomer(Customer customer) {
+       // same as create new customer
+   // }
 }

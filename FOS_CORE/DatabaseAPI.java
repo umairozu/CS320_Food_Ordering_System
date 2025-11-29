@@ -14,7 +14,6 @@ public class DatabaseAPI {
 
     public boolean addNewCustomer(User user) {
 
-
         return dao.addNewCustomer(user);
     }
 
