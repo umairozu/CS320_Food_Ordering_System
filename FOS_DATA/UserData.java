@@ -72,10 +72,10 @@ public class UserData implements IUserData {
             statement.setInt(1, customerId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    int cardNumber = resultSet.getInt("card_no");
+                    String cardNumber = resultSet.getString("card_no");
                     Date expiryDate = resultSet.getDate("expiry_date");
                     String cardholderName = resultSet.getString("cardholder_name");
-                    int cvv = resultSet.getInt("cvv");
+                    String cvv = resultSet.getString("cvv");
                     cards.add(new Card(cardNumber, cardholderName, expiryDate, cvv));
                 }
             } catch (SQLException e) {
@@ -92,10 +92,10 @@ public class UserData implements IUserData {
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, customerId);
-            statement.setInt(2, card.getCardNumber());
+            statement.setString(2, card.getCardNumber());
             statement.setDate(3, card.getExpiryDate());
             statement.setString(4, card.getCardHolderName());
-            statement.setInt(5, card.getCvv());
+            statement.setString(5, card.getCvv());
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {

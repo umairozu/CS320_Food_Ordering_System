@@ -3,25 +3,25 @@ package FOS_CORE;
 import java.sql.Date;
 
 public class Card {
-    private int cardNumber;
+    private String cardNumber;
     private String cardHolderName;
     private Date expiryDate;
-    private int cvv;
+    private String cvv;
 
     public Card(){ }
 
-    public Card(int cardNumber, String cardHolderName, Date expiryDate, int cvv){
+    public Card(String cardNumber, String cardHolderName, Date expiryDate, String cvv){
         this.cardNumber = cardNumber;
         this.cardHolderName = cardHolderName;
         this.expiryDate = expiryDate;
         this.cvv = cvv;
     }
 
-    public int getCardNumber() {
+    public String getCardNumber() {
         return cardNumber;
     }
 
-    public void setCardNumber(int cardNumber) {
+    public void setCardNumber(String cardNumber) {
         this.cardNumber = cardNumber;
     }
 
@@ -41,11 +41,11 @@ public class Card {
         this.expiryDate = expiryDate;
     }
 
-    public int getCvv() {
+    public String getCvv() {
         return cvv;
     }
 
-    public void setCvv(int cvv) {
+    public void setCvv(String cvv) {
         this.cvv = cvv;
     }
 }
