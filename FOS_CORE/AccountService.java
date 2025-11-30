@@ -13,7 +13,7 @@ public class AccountService implements IAccountService {
     public Customer createCustomerAccount(String email, String phone, String password) {
         Customer user = new Customer(userID, email, password);
         DB.addNewCustomer(user);
-        DB.addPhoneNumber(user,phone);
+        DB.addPhoneNumberToCustomer(user,phone);
         return null;
     }
     //Working on it : Mohamed Khaled Becetti
@@ -24,12 +24,12 @@ public class AccountService implements IAccountService {
     //Working on it : Mohamed Khaled Becetti
     @Override
     public void updateContactInfo(Customer customer, String phone) {
-        DB.addPhoneNumber(customer,phone);
+        DB.addPhoneNumberToCustomer(customer,phone);
     }
     //Working on it : Mohamed Khaled Becetti
     @Override
     public boolean addAddress(Customer customer, Address address) {
-        DB.addAddress(customer,address);
+        DB.addAddressToCustomer(customer,address);
         return false;
     }
     //Working on it : Mohamed Khaled Becetti
