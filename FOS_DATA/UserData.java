@@ -103,6 +103,21 @@ public class UserData implements IUserData {
             return false;
         }
     }
+    public boolean removeCardFromCustomer(Customer customer, Card card) {
+        int customerId = customer.getUserID();
+        String cardNumber = card.getCardNumber();
+        final String sql = "DELETE FROM Card WHERE customer_id = ? AND card_no = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, customerId);
+            statement.setString(2, cardNumber);
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Database failed to remove card from customer");
+            return false;
+        }
+    }
     public ArrayList<Address> fetchCustomerAddresses(Customer customer) {
         int customerId = customer.getUserID();
         ArrayList<Address> addresses = new ArrayList<>();
@@ -127,7 +142,7 @@ public class UserData implements IUserData {
         }
         return addresses;
     }
-    public boolean addAddress(Customer customer, Address address) {
+    public boolean addAddressToCustomer(Customer customer, Address address) {
         int customerId = customer.getUserID();
         final String sql = "INSERT INTO Address (customer_id, address_line, city, state, zip_code) VALUES (?, ?, ?, ?, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -144,6 +159,24 @@ public class UserData implements IUserData {
             return false;
         }
     }
+
+    @Override
+    public boolean removeAddressFromCustomer(Customer customer, Address address) {
+        int customerId = customer.getUserID();
+        int addressId = address.getAddressID();
+        final String sql = "DELETE FROM Address WHERE customer_id = ? AND address_id = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, customerId);
+            statement.setInt(2, addressId);
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Database failed to remove address from customer");
+            return false;
+        }
+    }
+
     public ArrayList<String> fetchCustomerPhoneNumbers(Customer customer) {
         int customerId = customer.getUserID();
         ArrayList<String> phoneNumbers = new ArrayList<>();
@@ -164,7 +197,7 @@ public class UserData implements IUserData {
         }
         return phoneNumbers;
     }
-    public boolean addPhoneNumber(Customer customer, String phoneNumber) {
+    public boolean addPhoneNumberToCustomer(Customer customer, String phoneNumber) {
         int customerId = customer.getUserID();
         final String sql = "INSERT INTO PhoneNumber (customer_id, phone_number) VALUES (?, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
@@ -175,6 +208,20 @@ public class UserData implements IUserData {
             return rowsAffected > 0;
         } catch (SQLException e) {
             System.out.println("Database failed to add phone number to customer");
+            return false;
+        }
+    }
+    public boolean removePhoneNumberFromCustomer(Customer customer, String phoneNumber) {
+        int customerId = customer.getUserID();
+        final String sql = "DELETE FROM PhoneNumber WHERE customer_id = ? AND phone_number = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, customerId);
+            statement.setString(2, phoneNumber);
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.out.println("Database failed to remove phone number from customer");
             return false;
         }
     }

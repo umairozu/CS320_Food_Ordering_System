@@ -16,10 +16,13 @@ public interface IUserData {
     public boolean changeUserPassword(User user, String newHashedPassword);
     public ArrayList<Card> fetchCustomerCards(Customer customer);
     public boolean addCardToCustomer(Customer customer, Card card);
+    public boolean removeCardFromCustomer(Customer customer, Card card);
     public ArrayList<Address> fetchCustomerAddresses(Customer customer);
-    public boolean addAddress(Customer customer,Address address);
+    public boolean addAddressToCustomer(Customer customer,Address address);
+    public  boolean removeAddressFromCustomer(Customer customer, Address address);
     public ArrayList<String> fetchCustomerPhoneNumbers(Customer customer);
-    public boolean addPhoneNumber(Customer customer, String phoneNumber);
+    public boolean addPhoneNumberToCustomer(Customer customer, String phoneNumber);
+    public boolean removePhoneNumberFromCustomer(Customer customer, String phoneNumber);
     public ArrayList<Order> fetchCustomerOrders(Customer customer, ArrayList<Restaurant> restaurants);
     public boolean insertCustomerOrder(Customer customer, Order order, Restaurant restaurant);
 }
