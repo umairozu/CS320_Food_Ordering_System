@@ -82,12 +82,13 @@ public class RestaurantMenuPanel extends JPanel {
         JLabel nameLabel = new JLabel(item.getItemName());
         nameLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
         JLabel descLabel = new JLabel(item.getDescription() != null ? item.getDescription() : "");
+        double price = item.getPrice();
         JLabel priceLabel = new JLabel(String.format("  $%.2f", item.getPrice()));
-        double discountedPrice = service.calculateMenuItemDiscount(item);
+        final double finalPrice = service.calculateMenuItemDiscount(item);
         JLabel discountedPriceLabel = new JLabel();
-        if (discountedPrice > 0) {
+        if (finalPrice != price) {
             priceLabel.setText(String.format("Original Price:   " + String.format("$%.2f", item.getPrice())));
-            discountedPriceLabel.setText(String.format("Discounted Price:   "+ String.format("$%.2f", discountedPrice)));
+            discountedPriceLabel.setText(String.format("Discounted Price:   "+ String.format("$%.2f", finalPrice)));
         }
 
         JPanel infoPanel = new JPanel(new GridLayout(3, 1));
@@ -103,7 +104,7 @@ public class RestaurantMenuPanel extends JPanel {
         JButton addButton = new JButton("Add to Cart");
         addButton.addActionListener(e -> {
             int quantity = (Integer) quantitySpinner.getValue();
-            addToCart(item, quantity);
+            addToCart(item, quantity, finalPrice);
         });
         quantityPanel.add(addButton);
 
@@ -112,7 +113,7 @@ public class RestaurantMenuPanel extends JPanel {
         return card;
     }
 
-    private void addToCart(MenuItem item, int quantity) {
+    private void addToCart(MenuItem item, int quantity, double price) {
         Customer customer = mainFrame.getCurrentCustomer();
         if (customer == null) {
             JOptionPane.showMessageDialog(this, "Please log in first.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -121,7 +122,7 @@ public class RestaurantMenuPanel extends JPanel {
 
         try {
             CartService cartService = mainFrame.getCartService();
-            cartService.addToCart(customer, item, quantity);
+            cartService.addToCart(customer, item, quantity,price);
             JOptionPane.showMessageDialog(this,
                     quantity + "x " + item.getItemName() + " added to cart!",
                     "Success",

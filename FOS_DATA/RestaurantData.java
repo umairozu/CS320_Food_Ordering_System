@@ -1,5 +1,6 @@
 package FOS_DATA;
 
+import FOS_CORE.Customer;
 import FOS_CORE.Discount;
 import FOS_CORE.MenuItem;
 import FOS_CORE.Restaurant;

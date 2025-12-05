@@ -59,7 +59,7 @@ public class RestaurantService implements IRestaurantService {
                 return originalPrice * (1-(percentage / 100.0));
             }
         }
-        return 0.0;
+        return item.getPrice();
     }
 
     private void loadRestaurantData(Restaurant restaurant) {

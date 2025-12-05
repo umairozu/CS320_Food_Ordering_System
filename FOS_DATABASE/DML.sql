@@ -87,17 +87,18 @@ INSERT INTO `Order` (customer_id, restaurant_id, order_status, order_date, deliv
 (8, 5, 'delivered', '2025-04-11 16:00:00', 8);
 
 -- ORDER ITEMS
-INSERT INTO CartItem (order_id, menu_item_id, quantity) VALUES
-(1, 1, 2), (1, 2, 1),
-(2, 4, 3),
-(3, 7, 2), (3, 8, 2),
-(4, 10, 1),
-(5, 13, 2),
-(6, 1, 1), (6, 3, 1),
-(7, 4, 2),
-(8, 7, 1), (8, 9, 1),
-(9, 10, 2),
-(10, 13, 1), (10, 15, 2);
+INSERT INTO CartItem (order_id, menu_item_id, price, quantity) VALUES
+(1, 1, 10.00, 2), (1, 2, 12.50, 1),
+(2, 4, 15.00, 3),
+(3, 7, 20.00, 2), (3, 8, 18.00, 2),
+(4, 10, 22.00, 1),
+(5, 13, 14.00, 2),
+(6, 1, 10.00, 1), (6, 3, 11.00, 1),
+(7, 4, 15.00, 2),
+(8, 7, 20.00, 1), (8, 9, 17.00, 1),
+(9, 10, 22.00, 2),
+(10, 13, 14.00, 1), (10, 15, 19.00, 2);
+
 
 -- RATINGS (fixed column names)
 INSERT INTO Rating (order_id, rating_value, rating_comment) VALUES

@@ -5,8 +5,9 @@ import java.util.ArrayList;
 public class CartService implements ICartService {
 
     @Override
-    public void addToCart(Customer customer, MenuItem item, int quantity) {
-        // TODO: Implemntation
+    public void addToCart(Customer customer, MenuItem item, int quantity, double price) {
+        CartItem cartItem = new CartItem(item, quantity, price);
+
     }
 
     @Override

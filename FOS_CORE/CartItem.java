@@ -4,12 +4,14 @@ public class CartItem {
 
     private MenuItem item;
     private int quantity;
+    private double price;
 
     public CartItem() { }
 
-    public CartItem(MenuItem item, int quantity) {
+    public CartItem(MenuItem item, int quantity, double price) {
         this.item = item;
         this.quantity = quantity;
+        this.price = price;
     }
 
     public MenuItem getItem() {

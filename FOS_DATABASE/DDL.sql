@@ -80,6 +80,7 @@ CREATE TABLE `Order` (
 CREATE TABLE CartItem (
     order_id INT,
     menu_item_id INT NOT NULL,
+    price INT NOT NULL,
     quantity INT NOT NULL CHECK (quantity > 0),
     PRIMARY KEY (order_id, menu_item_id),
     FOREIGN KEY (order_id) REFERENCES `Order`(order_id) ON DELETE CASCADE,
