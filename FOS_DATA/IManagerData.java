@@ -19,5 +19,6 @@ public interface IManagerData extends IUserData {
     public ArrayList<MenuItem> fetchRestaurantMenu(Restaurant restaurant);
     public ArrayList<Order> fetchRestaurantOrders(Restaurant restaurant);
     public ArrayList<String> fetchRestaurantKeywords(Restaurant restaurant);
+    public ArrayList<Restaurant> getManagerRestaurants(Manager manager);
 
 }

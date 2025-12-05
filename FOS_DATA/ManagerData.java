@@ -109,8 +109,8 @@ public class ManagerData extends UserData implements IManagerData {
             return rowsAffected > 0;
         } catch (SQLException e) {
             System.out.println("Database failed to create discount: " + e.getMessage());
-            return false;
         }
+        return false;
     }
 
     public ArrayList<MenuItem> fetchRestaurantMenu(Restaurant restaurant) {
@@ -192,6 +192,30 @@ public class ManagerData extends UserData implements IManagerData {
             return null;
         }
     }
+
+
+    public ArrayList<Restaurant> getManagerRestaurants(Manager manager) {
+        int managerId = manager.getUserID();
+        ArrayList<Restaurant> restaurants = new ArrayList<>();
+        String sql = "SELECT restaurant_id, name, cuisine_type, city FROM Restaurant WHERE manager_id = ?";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, managerId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    int restaurantId = resultSet.getInt("restaurant_id");
+                    String name = resultSet.getString("name");
+                    String cuisineType = resultSet.getString("cuisine_type");
+                    String city = resultSet.getString("city");
+                    restaurants.add(new Restaurant(restaurantId, name, cuisineType, city));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Database failed to fetch manager restaurants");
+        }
+        return restaurants;
+    }
+
 
 
     //private functions start here

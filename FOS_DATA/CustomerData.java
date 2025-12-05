@@ -112,7 +112,7 @@ public class CustomerData extends UserData implements ICustomerData {
     }
     public boolean addAddressToCustomer(Customer customer, Address address) {
         int customerId = customer.getUserID();
-        final String sql = "INSERT INTO Address (customer_id, address_line, city, state, zip_code) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Address (customer_id, address_line, city, state, zip_code) VALUES (?, ?, ?, ?, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, customerId);
@@ -121,6 +121,14 @@ public class CustomerData extends UserData implements ICustomerData {
             statement.setString(4, address.getState());
             statement.setString(5, address.getZipCode());
             int rowsAffected = statement.executeUpdate();
+            sql = "SELECT LAST_INSERT_ID() AS address_id";
+            try (PreparedStatement idStatement = connection.prepareStatement(sql);
+                 ResultSet resultSet = idStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    int addressId = resultSet.getInt("address_id");
+                    address.setAddressID(addressId);
+                }
+            }
             return rowsAffected > 0;
         } catch (SQLException e) {
             System.out.println("Database failed to add address to customer");
@@ -173,11 +181,13 @@ public class CustomerData extends UserData implements ICustomerData {
             statement.setInt(1, customerId);
             statement.setString(2, phoneNumber);
             int rowsAffected = statement.executeUpdate();
-            return rowsAffected > 0;
+            if(rowsAffected > 0){
+                customer.getPhoneNumbers().add(phoneNumber);
+            }
         } catch (SQLException e) {
             System.out.println("Database failed to add phone number to customer");
-            return false;
         }
+        return false;
     }
     public boolean removePhoneNumberFromCustomer(Customer customer, String phoneNumber) {
         int customerId = customer.getUserID();
@@ -187,11 +197,14 @@ public class CustomerData extends UserData implements ICustomerData {
             statement.setInt(1, customerId);
             statement.setString(2, phoneNumber);
             int rowsAffected = statement.executeUpdate();
-            return rowsAffected > 0;
+            if(rowsAffected > 0){
+                customer.getPhoneNumbers().remove(phoneNumber);
+                return true;
+            }
         } catch (SQLException e) {
             System.out.println("Database failed to remove phone number from customer");
-            return false;
         }
+        return false;
     }
     public ArrayList<Order> fetchCustomerOrders(Customer customer) {
         int customerId = customer.getUserID();
@@ -258,30 +271,6 @@ public class CustomerData extends UserData implements ICustomerData {
         }
         return false;
     }
-
-
-    public ArrayList<Restaurant> getManagerRestaurants(Manager manager) {
-        int managerId = manager.getUserID();
-        ArrayList<Restaurant> restaurants = new ArrayList<>();
-        String sql = "SELECT restaurant_id, name, cuisine_type, city FROM Restaurant WHERE manager_id = ?";
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, managerId);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    int restaurantId = resultSet.getInt("restaurant_id");
-                    String name = resultSet.getString("name");
-                    String cuisineType = resultSet.getString("cuisine_type");
-                    String city = resultSet.getString("city");
-                    restaurants.add(new Restaurant(restaurantId, name, cuisineType, city));
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Database failed to fetch manager restaurants");
-        }
-        return restaurants;
-    }
-
 
     //private functions start here
     private ArrayList<Restaurant> fetchRestaurants() {;
