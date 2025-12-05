@@ -1,94 +1,114 @@
 package FOS_UI;
-
+//Being Implemented by Hassan Askari
 import FOS_CORE.IAccountService;
-import FOS_CORE.Customer;
-import FOS_CORE.Address;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-// Done by Hassan Askari
+
 public class CustomerRegistrationWindow extends JFrame {
 
-    private final JTextField emailField = new JTextField(20);
-    private final JTextField phoneField = new JTextField(15);
-    private final JPasswordField passwordField = new JPasswordField(20);
-    private final JTextField addressField = new JTextField(30);
-    private final JButton registerBtn = new JButton("Register");
+    private JTextField emailField;
+    private JTextField phoneField;
+    private JPasswordField passwordField;
+    private JButton registerButton;
+    private JButton clearButton;
+    private JButton cancelButton;
 
     public CustomerRegistrationWindow() {
-        super("Register - FOS");
-        initUI();
-    }
-
-    private void initUI() {
-        setSize(480,260);
-        setLocationRelativeTo(null);
+        setTitle("Food Ordering System - Register");
+        setSize(420, 260);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
 
-        JPanel panel = new JPanel(new GridBagLayout());
-        var c = new GridBagConstraints();
-        c.insets = new Insets(6,6,6,6);
-        c.fill = GridBagConstraints.HORIZONTAL;
-
-        c.gridx = 0; c.gridy = 0; panel.add(new JLabel("Email:"), c);
-        c.gridx = 1; panel.add(emailField, c);
-
-        c.gridx = 0; c.gridy = 1; panel.add(new JLabel("Phone:"), c);
-        c.gridx = 1; panel.add(phoneField, c);
-
-        c.gridx = 0; c.gridy = 2; panel.add(new JLabel("Password:"), c);
-        c.gridx = 1; panel.add(passwordField, c);
-
-        c.gridx = 0; c.gridy = 3; panel.add(new JLabel("Address (optional):"), c);
-        c.gridx = 1; panel.add(addressField, c);
-
-        c.gridx = 1; c.gridy = 4; panel.add(registerBtn, c);
-
-        add(panel);
-
-        registerBtn.addActionListener(this::onRegister);
+        initComponents();
     }
 
-    private void onRegister(ActionEvent e) {
-        String email = emailField.getText();
-        String phone = phoneField.getText();
-        String pw = new String(passwordField.getPassword());
-        String addressLine = addressField.getText();
+    private void initComponents() {
 
-        if (!InputValidator.isEmailValid(email)) {
-            DialogUtils.showError(this, "Validation", "Enter a valid email.");
+        emailField = new JTextField(20);
+        phoneField = new JTextField(20);
+        passwordField = new JPasswordField(20);
+
+        registerButton = new JButton("Register");
+        clearButton = new JButton("Clear");
+        cancelButton = new JButton("Cancel");
+
+        registerButton.addActionListener(e -> handleRegistration());
+
+        clearButton.addActionListener(e -> {
+            emailField.setText("");
+            phoneField.setText("");
+            passwordField.setText("");
+        });
+
+        cancelButton.addActionListener(e -> dispose());
+
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(6, 6, 6, 6);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        gbc.gridx = 0; gbc.gridy = 0;
+        formPanel.add(new JLabel("Email:"), gbc);
+        gbc.gridx = 1;
+        formPanel.add(emailField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 1;
+        formPanel.add(new JLabel("Phone:"), gbc);
+        gbc.gridx = 1;
+        formPanel.add(phoneField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 2;
+        formPanel.add(new JLabel("Password:"), gbc);
+        gbc.gridx = 1;
+        formPanel.add(passwordField, gbc);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.add(cancelButton);
+        buttonPanel.add(clearButton);
+        buttonPanel.add(registerButton);
+
+        getContentPane().setLayout(new BorderLayout());
+        add(formPanel, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    private void handleRegistration() {
+        String email = emailField.getText().trim();
+        String phone = phoneField.getText().trim();
+        String password = new String(passwordField.getPassword());
+
+        // --- VALIDATION ---
+        if (!InputValidator.isNonEmpty(email) ||
+                !InputValidator.isNonEmpty(password)) {
+            DialogUtils.showError(this, "Email and password are required.");
             return;
         }
-        if (!InputValidator.isPhoneValid(phone)) {
-            DialogUtils.showError(this, "Validation", "Enter a valid phone number.");
-            return;
-        }
-        if (!InputValidator.isNonEmpty(pw)) {
-            DialogUtils.showError(this, "Validation", "Enter a password.");
+
+        if (!InputValidator.isValidEmail(email)) {
+            DialogUtils.showError(this, "Please enter a valid email address.");
             return;
         }
 
         try {
             IAccountService accountService = ServiceContext.getAccountService();
-            Customer created = accountService.createCustomerAccount(email, phone, pw);
-            if (created == null) {
-                DialogUtils.showError(this, "Registration", "Registration failed (possibly duplicate).");
-                return;
+            boolean created = accountService.createCustomerAccount(email, phone, password);
+
+            if (created) {
+                DialogUtils.showInfo(this, "Account created successfully!");
+
+                // go back to login window
+                SwingUtilities.invokeLater(() -> {
+                    new LoginWindow().setVisible(true);
+                });
+
+                dispose();
+            } else {
+                DialogUtils.showError(this, "Failed to create account.");
             }
 
-            if (InputValidator.isNonEmpty(addressLine)) {
-                Address addr = new Address(); // using FOS_CORE.Address
-                addr.setAddressLine(addressLine);
-                accountService.addAddress(created, addr);
-            }
-
-            DialogUtils.showInfo(this, "Success", "Account created successfully. You can login now.");
-            this.dispose();
         } catch (Exception ex) {
-            DialogUtils.showError(this, "Error", "An error occurred while registering.");
-            ex.printStackTrace();
+            DialogUtils.showError(this, "Error: " + ex.getMessage());
         }
     }
 }
-
