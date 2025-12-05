@@ -13,13 +13,14 @@ public class Restaurant {
     ArrayList<String> Keywords;
     private ArrayList<MenuItem> menu;
 
-    public Restaurant(){ }
-
     public Restaurant(int restaurantID, String restaurantName, String cuisineType, String city){
+        RestaurantService restaurantService = new RestaurantService();
         this.restaurantID = restaurantID;
         this.restaurantName = restaurantName;
         this.cuisineType = cuisineType;
         this.city = city;
+        this.Keywords = restaurantService.fetchRestaurantKeywords(this);
+        this.menu = restaurantService.fetchRestaurantMenu(this);
     }
 
     public ArrayList<MenuItem> getMenu(){

@@ -33,7 +33,6 @@ public class ManagerData extends UserData implements IManagerData {
                 String name = resultSet.getString("name");
                 String cuisineType = resultSet.getString("cuisine_type");
                 Restaurant restaurant = new Restaurant(restaurantId, name, cuisineType, city);
-                restaurant.setMenu(this.fetchRestaurantMenu(restaurant));
                 restaurants.add(restaurant);
             }
             return restaurants;
@@ -194,7 +193,7 @@ public class ManagerData extends UserData implements IManagerData {
     }
 
 
-    public ArrayList<Restaurant> getManagerRestaurants(Manager manager) {
+    public ArrayList<Restaurant> fetchManagerRestaurants(Manager manager) {
         int managerId = manager.getUserID();
         ArrayList<Restaurant> restaurants = new ArrayList<>();
         String sql = "SELECT restaurant_id, name, cuisine_type, city FROM Restaurant WHERE manager_id = ?";

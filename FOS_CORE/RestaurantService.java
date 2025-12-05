@@ -16,7 +16,7 @@ public class RestaurantService implements IRestaurantService {
     }
 
     @Override
-    public ArrayList<MenuItem> getRestaurantMenu(Restaurant restaurant) {
+    public ArrayList<MenuItem> fetchRestaurantMenu(Restaurant restaurant) {
         // TODO: Implementation
         return null;
     }
@@ -27,7 +27,7 @@ public class RestaurantService implements IRestaurantService {
         return null;
     }
 
-    public ArrayList<String> fetchKeywords(Restaurant restaurant){
+    public ArrayList<String> fetchRestaurantKeywords(Restaurant restaurant){
         return new ArrayList<>();
     }
 
