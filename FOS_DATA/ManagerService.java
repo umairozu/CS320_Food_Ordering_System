@@ -196,10 +196,10 @@ public class ManagerService extends UserData implements IManagerService {
 
     private ArrayList<CartItem> fetchOrderItemsByOrderID(int orderID) {
         ArrayList<CartItem> items = new ArrayList<>();
-        final String sql = "SELECT mi.menu_item_id, mi.item_name, mi.description, mi.price, oi.quantity " +
-                "FROM OrderItem oi " +
-                "JOIN MenuItem mi ON oi.menu_item_id = mi.menu_item_id " +
-                "WHERE oi.order_id = ?";
+        final String sql = "SELECT mi.menu_item_id, mi.item_name, mi.description, mi.price, oi.quantity, ci.price as cart_price " +
+                "FROM CartItem oi " +
+                "JOIN MenuItem mi ON ci.menu_item_id = mi.menu_item_id " +
+                "WHERE ci.order_id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, orderID);
@@ -210,8 +210,9 @@ public class ManagerService extends UserData implements IManagerService {
                 String description = resultSet.getString("description");
                 double price = resultSet.getDouble("price");
                 int quantity = resultSet.getInt("quantity");
+                int cartPrice = resultSet.getInt("cart_price");
                 MenuItem menuItem = new MenuItem(menuItemId, itemName, description, price);
-                items.add(new CartItem(menuItem, quantity));
+                items.add(new CartItem(menuItem, quantity,cartPrice));
             }
         } catch (SQLException e) {
             System.out.println("Database failed to fetch order items: " + e.getMessage());

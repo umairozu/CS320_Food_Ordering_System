@@ -71,18 +71,31 @@ public class CartPanel extends JPanel {
         MenuItem item = cartItem.getItem();
         JLabel nameLabel = new JLabel(item.getItemName());
         nameLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
-        JLabel quantityLabel = new JLabel("Quantity: " + cartItem.getQuantity());
-        JLabel priceLabel = new JLabel(String.format("$%.2f", cartItem.calculateItemTotal()));
+        JPanel quantityPanel = new JPanel(new FlowLayout());
+        quantityPanel.add(new JLabel("Quantity:"));
+        JSpinner quantitySpinner = new JSpinner(new SpinnerNumberModel(cartItem.getQuantity(), 1, 10, 1));
+        quantitySpinner.addChangeListener(
+                e -> {
+                    int newQuantity = (int) quantitySpinner.getValue();
+                    CartService cartService = mainFrame.getCartService();
+                    cartService.updateCartItemQuantity(mainFrame.getCurrentCustomer(), item, newQuantity);
+                    refresh();
+                }
+        );
+        quantityPanel.add(quantitySpinner);
+        JLabel perItemPriceLabel = new JLabel("Item Price:  " + String.format("$%.2f", cartItem.getPrice()));
+        JLabel totalPriceLabel = new JLabel("Sub Total Price:  " + String.format("$%.2f", cartItem.calculateItemTotal()));
 
-        JPanel infoPanel = new JPanel(new GridLayout(3, 1));
+        JPanel infoPanel = new JPanel(new GridLayout(4, 1));
         infoPanel.add(nameLabel);
-        infoPanel.add(quantityLabel);
-        infoPanel.add(priceLabel);
+        infoPanel.add(quantityPanel);
+        infoPanel.add(perItemPriceLabel);
+        infoPanel.add(totalPriceLabel);
 
         JButton removeButton = new JButton("Remove");
         removeButton.addActionListener(e -> {
             CartService cartService = mainFrame.getCartService();
-            cartService.updateCartItem(mainFrame.getCurrentCustomer(), item, 0);
+            cartService.removeFromCart(mainFrame.getCurrentCustomer(), item);
             refresh();
         });
 

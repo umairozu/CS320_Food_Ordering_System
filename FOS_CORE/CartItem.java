@@ -30,8 +30,16 @@ public class CartItem {
         this.quantity = quantity;
     }
 
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
     // UML: calculateItemTotal(item, quantity) : double
     public double calculateItemTotal() {
-        return item.getPrice() * quantity;
+        return price * quantity;
     }
 }

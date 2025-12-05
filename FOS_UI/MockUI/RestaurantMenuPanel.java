@@ -119,10 +119,13 @@ public class RestaurantMenuPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Please log in first.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
+        if(!isSameRestaurant()) {
+            JOptionPane.showMessageDialog(this, "You can only add items from one restaurant at a time. Please clear your cart first.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         try {
             CartService cartService = mainFrame.getCartService();
-            cartService.addToCart(customer, item, quantity,price);
+            cartService.addToCart(customer, item, quantity, price);
             JOptionPane.showMessageDialog(this,
                     quantity + "x " + item.getItemName() + " added to cart!",
                     "Success",
@@ -130,6 +133,29 @@ public class RestaurantMenuPanel extends JPanel {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Failed to add to cart: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private boolean isSameRestaurant() {
+        Customer customer = mainFrame.getCurrentCustomer();
+        ArrayList<CartItem> cartItems = customer.getCart();
+        ArrayList<MenuItem> cartMenuItems = new ArrayList<>();
+        List<MenuItem> menuItems = currentRestaurant.getMenu();
+        for (CartItem cartItem : cartItems) {
+            cartMenuItems.add(cartItem.getItem());
+        }
+        for(MenuItem cartMenuItem : cartMenuItems) {
+            int counter = 0;
+            for (MenuItem menuItem : menuItems) {
+                if(cartMenuItem.getMenuItemID() == menuItem.getMenuItemID()) {
+                    counter++;
+                    continue;
+                }
+            }
+            if(counter == 0) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 

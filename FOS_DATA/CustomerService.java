@@ -312,7 +312,7 @@ public class CustomerService extends UserData implements ICustomerService {
 
     private ArrayList<CartItem> fetchOrderItemsByOrderID(int orderID) {
         ArrayList<CartItem> items = new ArrayList<>();
-        final String sql = "SELECT mi.menu_item_id, mi.item_name, mi.description, mi.price, ci.quantity " +
+        final String sql = "SELECT mi.menu_item_id, mi.item_name, mi.description, mi.price, ci.quantity , ci.price as cart_price" +
                 "FROM CartItem ci " +
                 "JOIN MenuItem mi ON ci.menu_item_id = mi.menu_item_id " +
                 "WHERE ci.order_id = ?";
@@ -326,9 +326,10 @@ public class CustomerService extends UserData implements ICustomerService {
                 String description = resultSet.getString("description");
                 double price = resultSet.getDouble("price");
                 int quantity = resultSet.getInt("quantity");
+                int cartPrice = resultSet.getInt("cart_price");
                 ArrayList<Discount> discounts = fetchDiscountsByMenuItemID(menuItemId);
                 MenuItem menuItem = new MenuItem(menuItemId, itemName, description, price);
-                items.add(new CartItem(menuItem, quantity));
+                items.add(new CartItem(menuItem, quantity,cartPrice));
             }
         } catch (SQLException e) {
             System.out.println("Database failed to fetch order items: " + e.getMessage());
