@@ -3,6 +3,7 @@ package FOS_UI.MockUI;
 import FOS_CORE.*;
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class MainFrame extends JFrame {
     private Customer currentCustomer;
@@ -22,7 +23,6 @@ public class MainFrame extends JFrame {
         restaurantService = new RestaurantService();
         cartService = new CartService();
         orderService = new OrderService();
-        initComponents();
         showLogin();
     }
 
@@ -33,7 +33,12 @@ public class MainFrame extends JFrame {
 
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
-
+        ArrayList<String> customerAddresses = new ArrayList<>();
+        ArrayList<String> customerCities = new ArrayList<>();
+        for (Address address : currentCustomer.getAddresses()){
+            customerAddresses.add(address.toString());
+            customerCities.add(address.getCity());
+        }
         restaurantListPanel = new RestaurantListPanel(this);
         menuPanel = new RestaurantMenuPanel(this);
         cartPanel = new CartPanel(this);
@@ -73,9 +78,10 @@ public class MainFrame extends JFrame {
         User user = loginDialog.getLoggedInUser();
         if (user instanceof Customer) {
             currentCustomer = (Customer) user;
+            initComponents();
             showRestaurants();
             setVisible(true);
-        } else if (user != null) {
+        } else if (user instanceof Manager) {
             JOptionPane.showMessageDialog(this, "Manager interface not yet implemented.", "Info", JOptionPane.INFORMATION_MESSAGE);
             System.exit(0);
         } else {

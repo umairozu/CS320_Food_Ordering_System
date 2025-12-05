@@ -4,15 +4,15 @@ import FOS_CORE.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RestaurantListPanel extends JPanel {
     private MainFrame mainFrame;
     private JPanel restaurantPanel;
-    private JTextField cityField;
+    private JComboBox<String> cityDropdown;
     private JTextField searchField;
+    ArrayList<String> customerCities;
 
     public RestaurantListPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -24,10 +24,13 @@ public class RestaurantListPanel extends JPanel {
 
         JPanel topPanel = new JPanel(new FlowLayout());
         topPanel.add(new JLabel("City:"));
-        cityField = new JTextField(15);
-        topPanel.add(cityField);
-        JButton searchCityButton = new JButton("Search by City");
-        topPanel.add(searchCityButton);
+        Address[] addresses = mainFrame.getCurrentCustomer().getAddresses().toArray(new Address[0]);
+        String[] addressStrings = new String[addresses.length];
+        for (int i = 0; i < addresses.length; i++) {
+            addressStrings[i] = addresses[i].toString();
+        }
+        cityDropdown = new JComboBox<>(addressStrings);
+        topPanel.add(cityDropdown);
         topPanel.add(new JLabel("Keyword:"));
         searchField = new JTextField(15);
         topPanel.add(searchField);
@@ -39,14 +42,14 @@ public class RestaurantListPanel extends JPanel {
         restaurantPanel.setLayout(new BoxLayout(restaurantPanel, BoxLayout.Y_AXIS));
         JScrollPane scrollPane = new JScrollPane(restaurantPanel);
         add(scrollPane, BorderLayout.CENTER);
-
-        searchCityButton.addActionListener(e -> searchByCity());
+        cityDropdown.addActionListener(e -> searchByCity());
         searchKeywordButton.addActionListener(e -> searchByKeyword());
     }
 
     public void refresh() {
         restaurantPanel.removeAll();
-        String city = cityField.getText().trim();
+        String address = cityDropdown.getItemAt(0);
+        String city = extractCityFromAddress(address);
         if (!city.isEmpty()) {
             loadRestaurantsByCity(city);
         }
@@ -55,7 +58,8 @@ public class RestaurantListPanel extends JPanel {
     }
 
     private void searchByCity() {
-        String city = cityField.getText().trim();
+        String address = cityDropdown.getSelectedItem().toString();
+        String city = extractCityFromAddress(address);
         if (city.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please enter a city name.", "Validation Error", JOptionPane.WARNING_MESSAGE);
             return;
@@ -129,6 +133,13 @@ public class RestaurantListPanel extends JPanel {
         card.add(infoPanel, BorderLayout.CENTER);
         card.add(viewMenuButton, BorderLayout.EAST);
         return card;
+    }
+    private String extractCityFromAddress(String address) {
+        String[] parts = address.split(",");
+        if (parts.length >= 2) {
+            return parts[1].trim();
+        }
+        return "";
     }
 }
 

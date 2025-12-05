@@ -1,13 +1,18 @@
 package FOS_CORE;
 
+import FOS_DATA.IManagerService;
+import FOS_DATA.ManagerService;
+
 import java.util.ArrayList;
 
 public class RestaurantService implements IRestaurantService {
-
+    private final IManagerService DB = new ManagerService();
     @Override
     public ArrayList<Restaurant> getRestaurantsByCity(String city) {
-        // TODO: Implementation
-        return null;
+        if (city == null || city.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return DB.fetchRestaurantsByCity(city);
     }
 
     @Override
