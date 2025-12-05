@@ -23,7 +23,8 @@ public class CustomerRegistrationWindow extends JFrame {
         initComponents();
     }
 
-    private void initComponents() {
+    private void initComponents()
+    {
 
         emailField = new JTextField(20);
         phoneField = new JTextField(20);
@@ -35,7 +36,8 @@ public class CustomerRegistrationWindow extends JFrame {
 
         registerButton.addActionListener(e -> handleRegistration());
 
-        clearButton.addActionListener(e -> {
+        clearButton.addActionListener(e ->
+        {
             emailField.setText("");
             phoneField.setText("");
             passwordField.setText("");
@@ -73,41 +75,48 @@ public class CustomerRegistrationWindow extends JFrame {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    private void handleRegistration() {
+    private void handleRegistration()
+    {
         String email = emailField.getText().trim();
         String phone = phoneField.getText().trim();
         String password = new String(passwordField.getPassword());
 
-        // --- VALIDATION ---
         if (!InputValidator.isNonEmpty(email) ||
-                !InputValidator.isNonEmpty(password)) {
+                !InputValidator.isNonEmpty(password))
+        {
             DialogUtils.showError(this, "Email and password are required.");
             return;
         }
 
-        if (!InputValidator.isValidEmail(email)) {
+        if (!InputValidator.isValidEmail(email))
+        {
             DialogUtils.showError(this, "Please enter a valid email address.");
             return;
         }
 
-        try {
+        try
+        {
             IAccountService accountService = ServiceContext.getAccountService();
             boolean created = accountService.createCustomerAccount(email, phone, password);
 
-            if (created) {
+            if (created)
+            {
                 DialogUtils.showInfo(this, "Account created successfully!");
 
-                // go back to login window
                 SwingUtilities.invokeLater(() -> {
                     new LoginWindow().setVisible(true);
                 });
 
                 dispose();
-            } else {
+            }
+            else
+            {
                 DialogUtils.showError(this, "Failed to create account.");
             }
 
-        } catch (Exception ex) {
+        }
+        catch (Exception ex)
+        {
             DialogUtils.showError(this, "Error: " + ex.getMessage());
         }
     }
