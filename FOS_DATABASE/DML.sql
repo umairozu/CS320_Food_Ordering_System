@@ -13,22 +13,22 @@ INSERT INTO User (email, password, user_type) VALUES
 
 -- ADDRESSES
 INSERT INTO Address (customer_id, address_line, city) VALUES
-(1, '123 Manager St', 'Istanbul'),
-(2, '456 Manager Ave', 'Istanbul'),
-(3, '789 Manager Rd', 'Ankara'),
-(4, '101 Customer Ln', 'Istanbul'),
-(5, '202 Customer Dr', 'Istanbul'),
-(6, '303 Customer Blvd', 'Ankara'),
-(7, '404 Customer Cir', 'Istanbul'),
+(4, '123 Manager St', 'Istanbul'),
+(4, '456 Manager Ave', 'Istanbul'),
+(5, '789 Manager Rd', 'Ankara'),
+(5, '101 Customer Ln', 'Istanbul'),
+(6, '202 Customer Dr', 'Istanbul'),
+(7, '303 Customer Blvd', 'Ankara'),
+(8, '404 Customer Cir', 'Istanbul'),
 (8, '505 Customer Way', 'Ankara');
 
 -- PHONES
 INSERT INTO Phone (customer_id, phone_number) VALUES
-(1, '555-0101'),
-(2, '555-0102'),
-(3, '555-0103'),
-(4, '555-0104'),
-(5, '555-0105'),
+(4, '555-0101'),
+(4, '555-0102'),
+(5, '555-0103'),
+(5, '555-0104'),
+(6, '555-0105'),
 (6, '555-0106'),
 (7, '555-0107'),
 (8, '555-0108');
