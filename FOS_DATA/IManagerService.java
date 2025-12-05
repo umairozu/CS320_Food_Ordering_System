@@ -8,7 +8,6 @@ import FOS_CORE.MenuItem;
 public interface IManagerService {
 
     public boolean saveRestaurantInfo(Restaurant restaurant);
-    public ArrayList<Restaurant> fetchRestaurantsByCity(String city);
 
     public boolean addMenuItem(MenuItem menuItem, Restaurant restaurant);
     public boolean updateMenuItem(MenuItem menuItem);
@@ -16,7 +15,6 @@ public interface IManagerService {
 
     public boolean createDiscount(Discount discount, MenuItem menuItem);
 
-    public ArrayList<MenuItem> fetchRestaurantMenu(Restaurant restaurant);
     public ArrayList<Order> fetchRestaurantOrders(Restaurant restaurant);
     public ArrayList<String> fetchRestaurantKeywords(Restaurant restaurant);
     public ArrayList<Restaurant> fetchManagerRestaurants(Manager manager);

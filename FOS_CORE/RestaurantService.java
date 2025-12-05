@@ -8,8 +8,7 @@ import FOS_DATA.RestaurantData;
 import java.util.ArrayList;
 
 public class RestaurantService implements IRestaurantService {
-    private final IManagerService DB = new ManagerService();
-    private final IRestaurantData DB1 = new RestaurantData();
+    private final IRestaurantData DB = new RestaurantData();
     @Override
     public ArrayList<Restaurant> getRestaurantsByCity(String city) {
         if (city == null || city.isEmpty()) {
@@ -44,7 +43,7 @@ public class RestaurantService implements IRestaurantService {
     }
 
     public ArrayList<Discount> fetchMenuItemDiscounts(MenuItem item){
-        return DB1.fetchMenuItemDiscounts(item);
+        return DB.fetchMenuItemDiscounts(item);
     }
 
     public double calculateMenuItemDiscount(MenuItem item) {
