@@ -17,6 +17,7 @@ public class MainFrame extends JFrame {
     private RestaurantMenuPanel menuPanel;
     private CartPanel cartPanel;
     private OrderHistoryPanel orderHistoryPanel;
+    private AccountDetailsWindow accountDetailsPanel;
 
     public MainFrame() {
         super("Food Ordering System");
@@ -43,11 +44,13 @@ public class MainFrame extends JFrame {
         menuPanel = new RestaurantMenuPanel(this);
         cartPanel = new CartPanel(this);
         orderHistoryPanel = new OrderHistoryPanel(this);
+        accountDetailsPanel = new AccountDetailsWindow(this);
 
         mainPanel.add(restaurantListPanel, "RESTAURANTS");
         mainPanel.add(menuPanel, "MENU");
         mainPanel.add(cartPanel, "CART");
         mainPanel.add(orderHistoryPanel, "ORDERS");
+        mainPanel.add(accountDetailsPanel, "ACCOUNT DETAILS");
 
         add(mainPanel, BorderLayout.CENTER);
 
@@ -56,16 +59,20 @@ public class MainFrame extends JFrame {
         JMenuItem restaurantsItem = new JMenuItem("Restaurants");
         JMenuItem cartItem = new JMenuItem("Cart");
         JMenuItem ordersItem = new JMenuItem("Order History");
+        JMenuItem accountItem = new JMenuItem("Account Details");
         JMenuItem logoutItem = new JMenuItem("Logout");
 
         restaurantsItem.addActionListener(e -> showRestaurants());
         cartItem.addActionListener(e -> showCart());
         ordersItem.addActionListener(e -> showOrderHistory());
+        accountItem.addActionListener(e -> showAccountDetails());
         logoutItem.addActionListener(e -> logout());
 
         menu.add(restaurantsItem);
         menu.add(cartItem);
         menu.add(ordersItem);
+        menu.addSeparator();
+        menu.add(accountItem);
         menu.addSeparator();
         menu.add(logoutItem);
         menuBar.add(menu);
@@ -123,6 +130,15 @@ public class MainFrame extends JFrame {
         }
         orderHistoryPanel.refresh();
         cardLayout.show(mainPanel, "ORDERS");
+    }
+
+    public void showAccountDetails() {
+        if (currentCustomer == null) {
+            showLogin();
+            return;
+        }
+        accountDetailsPanel.refresh();
+        cardLayout.show(mainPanel, "ACCOUNT DETAILS");
     }
 
     public void logout() {
