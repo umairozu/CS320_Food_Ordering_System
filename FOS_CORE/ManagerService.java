@@ -20,17 +20,17 @@ public class ManagerService implements IManagerService {
 
     @Override
     public void addMenuItem(Restaurant restaurant, MenuItem item) {
-        // TODO
+        DB.addMenuItem(item, restaurant);
     }
 
     @Override
     public void editMenuItem(Restaurant restaurant, MenuItem item) {
-         // TODO
+         DB.updateMenuItem(item);// to be updated once changed from the data side
     }
 
     @Override
     public void removeMenuItem(Restaurant restaurant, MenuItem item) {
-        // TODO
+        DB.removeMenuItem(item);
     }
 
     @Override

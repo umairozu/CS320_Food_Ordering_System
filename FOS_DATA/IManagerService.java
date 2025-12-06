@@ -10,7 +10,7 @@ public interface IManagerService {
     public boolean saveRestaurantInfo(Restaurant restaurant);
 
     public boolean addMenuItem(MenuItem menuItem, Restaurant restaurant);
-    public boolean updateMenuItem(MenuItem menuItem);
+    public boolean updateMenuItem(MenuItem menuItem);// Please make this class take restaurant as an input since menu items can have the same name and ID can't be resolved without knowing the restaurant
     public boolean removeMenuItem(MenuItem menuItem);
 
     public boolean createDiscount(Discount discount, MenuItem menuItem);
