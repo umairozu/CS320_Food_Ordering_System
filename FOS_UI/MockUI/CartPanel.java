@@ -22,15 +22,16 @@ public class CartPanel extends JPanel {
     private void initComponents() {
         setLayout(new BorderLayout());
 
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel topPanel = new JPanel(new BorderLayout());
         JButton backButton = new JButton("Back to Restaurants");
         backButton.addActionListener(e -> mainFrame.showRestaurants());
-        topPanel.add(backButton);
+        topPanel.add(backButton, BorderLayout.WEST);
         restaurantLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
-        topPanel.add(restaurantLabel);
+        restaurantLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        topPanel.add(restaurantLabel, BorderLayout.CENTER);
         JButton emptyCart = new JButton("Empty Cart");
-        emptyCart.addActionListener(e -> {mainFrame.getCurrentCustomer().getCart().clear();});
-        topPanel.add(backButton);
+        emptyCart.addActionListener(e -> {mainFrame.getCurrentCustomer().getCart().clear();refresh();});
+        topPanel.add(emptyCart, BorderLayout.EAST);
         add(topPanel, BorderLayout.NORTH);
 
         cartItemsPanel = new JPanel();
@@ -166,7 +167,7 @@ public class CartPanel extends JPanel {
         }
     }
     public void setRestaurantLabel(String restaurantName) {
-        restaurantLabel.setText("Your cart is From      " + restaurantName);
+        restaurantLabel.setText("~ " + restaurantName + " ~");
     }
 }
 
