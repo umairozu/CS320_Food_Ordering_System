@@ -103,7 +103,7 @@ public class RestaurantProfileWindow extends JFrame {
 
 
     private void loadRestaurantDetails() {
-        Manager manager = Session.getCurrentManager();
+        Manager manager = ;
         if (manager == null) {
             DialogUtils.showError(this, "No manager is logged in.");
             return;

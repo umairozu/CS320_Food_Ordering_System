@@ -1,10 +1,13 @@
+import FOS_DATA.DatabaseConnection;
 import FOS_UI.MockUI.*;
 
 import javax.swing.*;
+import java.sql.Connection;
 
 public class main {
         public static void main(String[] args) {
-            SwingUtilities.invokeLater(()->{            try {
+
+           SwingUtilities.invokeLater(()->{            try {
                 MainFrame frame = new MainFrame();
                 frame.setVisible(true);
             } catch (Exception e) {
@@ -16,6 +19,5 @@ public class main {
                 System.exit(1);
             }
             });
-            System.out.println("Hello World!");
         }
 }
