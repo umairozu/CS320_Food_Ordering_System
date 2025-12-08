@@ -141,5 +141,6 @@ public class RegisterDialog extends JDialog {
                 "Karaman", "Kırıkkale", "Batman", "Şırnak", "Bartın", "Ardahan", "Iğdır", "Yalova", "Karabük",
                 "Kilis", "Osmaniye", "Düzce"};
     }
+
 }
 

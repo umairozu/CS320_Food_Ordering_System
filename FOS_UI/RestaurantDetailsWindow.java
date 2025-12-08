@@ -15,6 +15,7 @@ import java.util.List;
 //Worked on by Umair Ahmad
 public class RestaurantDetailsWindow extends JFrame{
 
+   /*
     private final Restaurant restaurant;
     private final IRestaurantService restaurantService;
     private final ICartService cartService;
@@ -103,5 +104,5 @@ public class RestaurantDetailsWindow extends JFrame{
         menuPanel.revalidate();
         menuPanel.repaint();
     }
-
+    */
 }
