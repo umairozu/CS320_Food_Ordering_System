@@ -62,6 +62,91 @@ public class RatingDialog extends JDialog{
 
         contentPanel.add(formPanel, BorderLayout.CENTER);
 
+        ///
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        submitButton = new JButton("Submit Rating");
+        submitButton.addActionListener(e -> submitRating());
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(e -> dispose());
+        buttonPanel.add(cancelButton);
+        buttonPanel.add(submitButton);
+
+        ///
+        add(contentPanel, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
     }
+
+
+    private void updateStateFromOrder() {
+        if (order == null) {
+            DialogUtils.showError(this, "No order provided to rate.");
+            disableInputs();
+            return;
+        }
+
+        if (order.getRating() != null) {
+            Rating existing = order.getRating();
+            DialogUtils.showInfo(this, "This order has already been rated.");
+            ratingSpinner.setValue(existing.getRatingValue());
+            commentArea.setText(existing.getReviewText());
+            disableInputs();
+            return;
+        }
+
+        if (order.getStatus() != OrderStatus.DELIVERED) {
+            DialogUtils.showError(this, "Only delivered orders can be rated.");
+            disableInputs();
+        }
+    }
+
+
+    private void disableInputs() {
+        if (ratingSpinner != null) {
+            ratingSpinner.setEnabled(false);
+        }
+        if (commentArea != null) {
+            commentArea.setEnabled(false);
+        }
+        if (submitButton != null) {
+            submitButton.setEnabled(false);
+        }
+    }
+
+
+    private void submitRating() {
+        Customer customer = Session.getCurrentCustomer();
+        if (customer == null) {
+            DialogUtils.showError(this, "You must be logged in as a customer to rate orders.");
+            return;
+        }
+
+        if (order == null) {
+            DialogUtils.showError(this, "No order is available to rate.");
+            return;
+        }
+
+        if (order.getStatus() != OrderStatus.DELIVERED) {
+            DialogUtils.showError(this, "Only delivered orders can be rated.");
+            return;
+        }
+
+        if (order.getRating() != null) {
+            DialogUtils.showInfo(this, "This order has already been rated.");
+            return;
+        }
+
+        int ratingValue = (Integer) ratingSpinner.getValue();
+        String comment = commentArea.getText() != null ? commentArea.getText().trim() : "";
+
+        try {
+            orderService.rateOrder(order, ratingValue, comment);
+            order.setRating(new Rating(ratingValue, comment));
+            DialogUtils.showInfo(this, "Thank you for your feedback!");
+            dispose();
+        } catch (Exception ex) {
+            DialogUtils.showError(this, "Failed to submit rating: " + ex.getMessage());
+        }
+    }
+
 
 }
