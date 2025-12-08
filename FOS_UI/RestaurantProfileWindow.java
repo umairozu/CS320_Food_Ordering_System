@@ -120,7 +120,6 @@ public class RestaurantProfileWindow extends JFrame {
 
             this.currentRestaurant = restaurant;
 
-            // Assuming typical getters in Restaurant: getRestaurantID(), getRestaurantName(), getCity(), getCuisineType()
             idValueLabel.setText(String.valueOf(restaurant.getRestaurantID()));
             nameField.setText(restaurant.getRestaurantName());
             cityField.setText(restaurant.getCity());
