@@ -15,6 +15,7 @@ import java.util.List;
 //Worked on by Umair Ahmad
 public class RestaurantDetailsWindow extends JFrame{
 
+    /// ALREADY IMPLEMENTED -> (SEE MOCK UI)
    /*
     private final Restaurant restaurant;
     private final IRestaurantService restaurantService;
