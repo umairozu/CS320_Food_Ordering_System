@@ -3,11 +3,15 @@ package FOS_UI;
 import FOS_CORE.IManagerService;
 import FOS_CORE.Manager;
 import FOS_CORE.Restaurant;
+
 import javax.swing.*;
 import java.awt.*;
 
-//worked on by Umair Ahmad
-public class RestaurantProfileWindow extends JFrame {
+// worked on by Umair Ahmad
+public class ManageRestaurantPanel extends JFrame {
+
+    private final Manager manager;   // the currently logged-in manager
+
     private JLabel idValueLabel;
     private JTextField nameField;
     private JTextField cityField;
@@ -19,7 +23,13 @@ public class RestaurantProfileWindow extends JFrame {
     // keep current restaurant in memory
     private Restaurant currentRestaurant;
 
-    public RestaurantProfileWindow() {
+    // pass the manager into the window instead of using Session
+    public ManageRestaurantPanel(Manager manager) {
+        if (manager == null) {
+            throw new IllegalArgumentException("Manager must not be null");
+        }
+        this.manager = manager;
+
         setTitle("Food Ordering System - Restaurant Profile");
         setSize(450, 260);
         setLocationRelativeTo(null); // center
@@ -97,18 +107,8 @@ public class RestaurantProfileWindow extends JFrame {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-
-    // Load restaurant details for the currently logged-in manager
-    // and fill the form fields.
-
-
+    // Load restaurant details for the current manager and fill the form fields.
     private void loadRestaurantDetails() {
-        Manager manager = ;
-        if (manager == null) {
-            DialogUtils.showError(this, "No manager is logged in.");
-            return;
-        }
-
         IManagerService managerService = ServiceContext.getManagerService();
 
         try {
@@ -131,11 +131,7 @@ public class RestaurantProfileWindow extends JFrame {
         }
     }
 
-
-    // Validating inputs
-    // updating the Restaurant object
-    // calling managerService to update Restaurant Info via updateRestaurantInfo(...)
-
+    // Validate inputs, update Restaurant object, and call managerService to persist changes.
     private void handleSave() {
         if (currentRestaurant == null) {
             DialogUtils.showError(this, "No restaurant loaded to update.");
@@ -154,20 +150,15 @@ public class RestaurantProfileWindow extends JFrame {
             return;
         }
 
+        // Update the in-memory restaurant
         currentRestaurant.setRestaurantName(name);
         currentRestaurant.setCity(city);
         currentRestaurant.setCuisineType(cuisine);
 
-        Manager manager = Session.getCurrentManager();
-
-        if (manager == null) {
-            DialogUtils.showError(this, "No manager is logged in.");
-            return;
-        }
-
         IManagerService managerService = ServiceContext.getManagerService();
 
         try {
+
             managerService.updateRestaurantInfo(currentRestaurant);
             DialogUtils.showInfo(this, "Restaurant profile updated successfully.");
         } catch (Exception ex) {

@@ -11,15 +11,20 @@ import java.awt.*;
 import java.sql.Date;
 import java.time.LocalDate;
 
-public class MonthlyReportWindow extends JFrame {
+public class MonthlyReportPanel extends JFrame {
+
+    private final Manager manager; // currently logged-in manager
 
     private JComboBox<String> monthDropdown;
     private JComboBox<String> yearDropdown;
     private JButton generateBtn;
     private JTextArea reportArea;
 
-    public MonthlyReportWindow()
-    {
+    public MonthlyReportPanel(Manager manager) {
+        if (manager == null) {
+            throw new IllegalArgumentException("Manager must not be null");
+        }
+        this.manager = manager;
 
         setTitle("Food Ordering System – Monthly Report");
         setSize(600, 500);
@@ -29,8 +34,7 @@ public class MonthlyReportWindow extends JFrame {
         initComponents();
     }
 
-    private void initComponents()
-    {
+    private void initComponents() {
 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
@@ -43,8 +47,7 @@ public class MonthlyReportWindow extends JFrame {
 
         yearDropdown = new JComboBox<>();
         int currentYear = LocalDate.now().getYear();
-        for (int y = currentYear; y >= currentYear - 5; y--)
-        {
+        for (int y = currentYear; y >= currentYear - 5; y--) {
             yearDropdown.addItem(String.valueOf(y));
         }
 
@@ -69,47 +72,43 @@ public class MonthlyReportWindow extends JFrame {
 
     private void onGenerateReport() {
 
-        Manager manager = Session.getCurrentManager();
-
-        if (manager == null)
-        {
+        if (manager == null) {
             DialogUtils.showError(this, "Only managers can view monthly reports.");
             return;
         }
 
         try {
-
             IManagerService ms = ServiceContext.getManagerService();
             Restaurant restaurant = ms.getRestaurantDetails(manager);
 
-            if (restaurant == null)
-            {
+            if (restaurant == null) {
                 DialogUtils.showError(this, "Restaurant not found for this manager.");
                 return;
             }
 
             String monthString = (String) monthDropdown.getSelectedItem();
-            if (monthString == null) return;
+            String yearString = (String) yearDropdown.getSelectedItem();
+            if (monthString == null || yearString == null) {
+                DialogUtils.showError(this, "Please select both month and year.");
+                return;
+            }
 
             int month = Integer.parseInt(monthString.substring(0, 2));
-            int year = Integer.parseInt((String) yearDropdown.getSelectedItem());
+            int year = Integer.parseInt(yearString);
 
             LocalDate date = LocalDate.of(year, month, 1);
             Date sqlDate = Date.valueOf(date);
+
             String report = ms.generateMonthlyReport(manager, restaurant, sqlDate);
 
-            if (report == null || report.trim().isEmpty())
-            {
+            if (report == null || report.trim().isEmpty()) {
                 reportArea.setText("No report available for the selected month.");
-            }
-            else
-            {
+            } else {
                 reportArea.setText(report);
             }
 
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
+            ex.printStackTrace();
             DialogUtils.showError(this, "Failed to generate monthly report.");
         }
     }
