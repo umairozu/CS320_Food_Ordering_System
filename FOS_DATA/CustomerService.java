@@ -66,7 +66,7 @@ public class CustomerService extends UserData implements ICustomerService {
     }
     public boolean addCardToCustomer(Customer customer, Card card) {
         int customerId = customer.getUserID();
-        final String sql = "INSERT INTO Card (customer_id, card_no, expiry_date, cardholder_name, cvv) VALUES (?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO Card (customer_id, card_no, expiry_date, card_holder_name, cvv) VALUES (?, ?, ?, ?, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, customerId);
@@ -77,7 +77,7 @@ public class CustomerService extends UserData implements ICustomerService {
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            System.out.println("Database failed to add card to customer");
+            System.out.println("Database failed to add card to customer" + e.getMessage());
             return false;
         }
     }

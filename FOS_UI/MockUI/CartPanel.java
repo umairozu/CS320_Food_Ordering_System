@@ -12,6 +12,9 @@ public class CartPanel extends JPanel {
     private JPanel cartItemsPanel;
     private JLabel totalLabel;
     private JLabel restaurantLabel = new JLabel("Your Cart is empty");
+    private JLabel addressLabel;
+    private Restaurant restaurant;
+    private String selectedPhoneNumber;
 
 
     public CartPanel(MainFrame mainFrame) {
@@ -39,20 +42,33 @@ public class CartPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(cartItemsPanel);
         add(scrollPane, BorderLayout.CENTER);
 
-        JPanel bottomPanel = new JPanel(new BorderLayout());
+        JPanel bottomPanel1 = new JPanel(new BorderLayout());
         totalLabel = new JLabel("Total: $0.00");
         totalLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
-        bottomPanel.add(totalLabel, BorderLayout.CENTER);
+        bottomPanel1.add(totalLabel, BorderLayout.CENTER);
 
         JButton checkoutButton = new JButton("Checkout");
         checkoutButton.addActionListener(e -> onCheckout());
-        bottomPanel.add(checkoutButton, BorderLayout.EAST);
+        bottomPanel1.add(checkoutButton, BorderLayout.EAST);
+        JComboBox <String> phoneNumberDropdown = new JComboBox<>(getCustomerPhoneNumbers());
+
+        JPanel bottomPanel2 = new JPanel(new BorderLayout());
+        selectedPhoneNumber = phoneNumberDropdown.getItemAt(0);
+        phoneNumberDropdown.addActionListener(e -> selectedPhoneNumber = (String) phoneNumberDropdown.getSelectedItem());
+        bottomPanel2.add(phoneNumberDropdown, BorderLayout.SOUTH);
+        addressLabel = new JLabel("Delivery Address: " + mainFrame.getRestaurantListPanel().getSelectedAddress());
+        bottomPanel2.add(addressLabel, BorderLayout.NORTH);
+
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.add(bottomPanel1, BorderLayout.SOUTH);
+        bottomPanel.add(bottomPanel2, BorderLayout.NORTH);
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
     public void refresh() {
         cartItemsPanel.removeAll();
         Customer customer = mainFrame.getCurrentCustomer();
+        addressLabel.setText("Delivery Address: " + mainFrame.getRestaurantListPanel().getSelectedAddress());
         if (customer == null || customer.getCart() == null || customer.getCart().isEmpty()) {
             restaurantLabel.setText("Your Cart is empty");
             totalLabel.setText("Total: $0.00");
@@ -121,34 +137,18 @@ public class CartPanel extends JPanel {
             return;
         }
 
-        if (customer.getAddresses() == null || customer.getAddresses().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please add a delivery address first.", "Error", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
         if (customer.getCards() == null || customer.getCards().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please add a payment card first.", "Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
-        // Convert cart to Cart object
-        ArrayList<CartItem> cart = new ArrayList<>();
-        cart.addAll(customer.getCart());
-
-        Address selectedAddress = customer.getAddresses().getFirst(); // Use first address
-        Restaurant restaurant = null; // Would need to track which restaurant
-        if (!customer.getCart().isEmpty()) {
-            // Get restaurant from first item (simplified)
-            MenuItem firstItem = customer.getCart().getFirst().getItem();
-            // Would need restaurant lookup here
-        }
-
+        Address selectedAddress = getSelectedAddress();
         CheckoutDialog checkoutDialog = new CheckoutDialog(
                 mainFrame,
                 customer,
-                new ArrayList<>(customer.getCart()),
+                customer.getCart(),
                 selectedAddress,
-                restaurant
+                restaurant,
+                selectedPhoneNumber
         );
         checkoutDialog.setVisible(true);
 
@@ -157,7 +157,7 @@ public class CartPanel extends JPanel {
             // Place order
             try {
                 OrderService orderService = mainFrame.getOrderService();
-                Order order = orderService.placeOrder(customer, cart, selectedAddress);
+                Order order = orderService.placeOrder(customer, customer.getCart(), selectedAddress);
                 customer.getCart().clear();
                 JOptionPane.showMessageDialog(this, "Order placed successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 refresh();
@@ -166,8 +166,21 @@ public class CartPanel extends JPanel {
             }
         }
     }
-    public void setRestaurantLabel(String restaurantName) {
-        restaurantLabel.setText("~ " + restaurantName + " ~");
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
+        restaurantLabel.setText("~ " + restaurant.getRestaurantName() + " ~");
+    }
+    private String[] getCustomerPhoneNumbers() {
+        return mainFrame.getCurrentCustomer().getPhoneNumbers().toArray(new String[0]);
+    }
+    private Address getSelectedAddress() {
+        String selectedAddressStr = mainFrame.getRestaurantListPanel().getSelectedAddress();
+        for (Address address : mainFrame.getCurrentCustomer().getAddresses()) {
+            if (address.toString().equals(selectedAddressStr)) {
+                return address;
+            }
+        }
+        return null;
     }
 }
 

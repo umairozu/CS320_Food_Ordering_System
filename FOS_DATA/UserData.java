@@ -28,11 +28,11 @@ public class UserData implements IUserData{
 
                 }
             } catch (SQLException e) {
-                System.out.println("No user found with the corresponding username");
+                System.out.println("No user found with the corresponding email: " + e.getMessage());
             }
 
         } catch (SQLException e) {
-            System.out.println("Database failed to fetch user by username");
+            System.out.println("Database failed to fetch user by email: " + e.getMessage());
         }
         return null;
     }

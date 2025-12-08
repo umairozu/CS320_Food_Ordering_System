@@ -128,7 +128,7 @@ public class RestaurantMenuPanel extends JPanel {
         try {
             CartService cartService = mainFrame.getCartService();
             cartService.addToCart(customer, item, quantity, price);
-            mainFrame.getCartPanel().setRestaurantLabel(currentRestaurant.getRestaurantName());
+            mainFrame.getCartPanel().setRestaurant(currentRestaurant);
             JOptionPane.showMessageDialog(this,
                     quantity + "x " + item.getItemName() + " added to cart!",
                     "Success",

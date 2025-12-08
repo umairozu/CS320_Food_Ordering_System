@@ -12,7 +12,7 @@ public class RegisterDialog extends JDialog {
     private JPasswordField confirmPasswordField;
     private JTextField phoneField;
     private JTextField addressLineField;
-    private JTextField cityField;
+    private JComboBox cityDropdown;
     private JTextField stateField;
     private JTextField zipField;
 
@@ -53,8 +53,8 @@ public class RegisterDialog extends JDialog {
         gbc.gridx = 0; gbc.gridy = 3;
         centerPanel.add(new JLabel("City:"), gbc);
         gbc.gridx = 1;
-        cityField = new JTextField(20);
-        centerPanel.add(cityField, gbc);
+        cityDropdown = new JComboBox<>(getTurkishCities());
+        centerPanel.add(cityDropdown, gbc);
 
         gbc.gridx = 0; gbc.gridy = 4;
         centerPanel.add(new JLabel("State:"), gbc);
@@ -97,7 +97,7 @@ public class RegisterDialog extends JDialog {
         String email = emailField.getText().trim();
         String phone = phoneField.getText().trim();
         String addressLine = addressLineField.getText().trim();
-        String city = cityField.getText().trim();
+        String city = cityDropdown.getSelectedItem().toString();
         String state = stateField.getText().trim();
         String zip = zipField.getText().trim();
         String password = new String(passwordField.getPassword());
@@ -128,6 +128,18 @@ public class RegisterDialog extends JDialog {
 
     public Customer getRegisteredUser() {
         return registeredUser;
+    }
+    private String[] getTurkishCities(){
+        return new String[]{"Adana", "Adıyaman", "Afyonkarahisar", "Ağrı", "Amasya", "Ankara", "Antalya", "Artvin",
+                "Aydın", "Balıkesir", "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur", "Bursa", "Çanakkale",
+                "Çankırı", "Çorum", "Denizli", "Diyarbakır", "Edirne", "Elazığ", "Erzincan", "Erzurum",
+                "Eskişehir", "Gaziantep", "Giresun", "Gümüşhane", "Hakkari", "Hatay", "Isparta", "Mersin",
+                "İstanbul", "İzmir", "Kars", "Kastamonu", "Kayseri", "Kırklareli", "Kırşehir", "Kocaeli",
+                "Konya", "Kütahya", "Malatya", "Manisa", "Kahramanmaraş", "Mardin", "Muğla", "Muş", "Nevşehir",
+                "Niğde", "Ordu", "Rize", "Sakarya", "Samsun", "Siirt", "Sinop", "Sivas", "Tekirdağ", "Tokat",
+                "Trabzon", "Tunceli", "Şanlıurfa", "Uşak", "Van", "Yozgat", "Zonguldak", "Aksaray", "Bayburt",
+                "Karaman", "Kırıkkale", "Batman", "Şırnak", "Bartın", "Ardahan", "Iğdır", "Yalova", "Karabük",
+                "Kilis", "Osmaniye", "Düzce"};
     }
 }
 

@@ -168,6 +168,9 @@ public class MainFrame extends JFrame {
     public CartPanel getCartPanel() {
         return cartPanel;
     }
+    public RestaurantListPanel getRestaurantListPanel() {
+        return restaurantListPanel;
+    }
 }
 
 

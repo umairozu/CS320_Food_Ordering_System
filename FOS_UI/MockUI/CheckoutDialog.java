@@ -8,26 +8,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-/**
- * Simple Swing dialog that mirrors the Python /confirm_cart flow at a high level:
- * - lets the customer review total amount,
- * - choose a stored card,
- * - invoke the payment service.
- *
- * The responsibility of actually creating/persisting the Order remains in
- * the service / data layer (OrderService, UserDataAccess, etc.).
- */
 public class CheckoutDialog extends JDialog {
 
     private final Customer customer;
     private final List<CartItem> cartItems;
     private final Address deliveryAddress;
     private final Restaurant restaurant;
+    private final String selectedPhoneNumber;
 
     private JComboBox<Card> cardComboBox;
     private JLabel totalLabel;
     private JButton payButton;
     private JButton cancelButton;
+    private JButton addCardButton;
 
     private TransactionRecord lastTransaction;
 
@@ -35,12 +28,14 @@ public class CheckoutDialog extends JDialog {
                           Customer customer,
                           List<CartItem> cartItems,
                           Address deliveryAddress,
-                          Restaurant restaurant) {
+                          Restaurant restaurant,
+                          String selectedPhoneNumber) {
         super(owner, "Checkout", true);
         this.customer = customer;
         this.cartItems = cartItems;
         this.deliveryAddress = deliveryAddress;
         this.restaurant = restaurant;
+        this.selectedPhoneNumber = selectedPhoneNumber;
         initComponents();
         pack();
         setLocationRelativeTo(owner);
@@ -55,7 +50,6 @@ public class CheckoutDialog extends JDialog {
         totalLabel = new JLabel("Total: " + String.format("%.2f", total));
         centerPanel.add(totalLabel);
 
-        // Card selection
         cardComboBox = new JComboBox<>();
         for (Card card : customer.getCards()) {
             cardComboBox.addItem(card);
@@ -74,20 +68,23 @@ public class CheckoutDialog extends JDialog {
                 return this;
             }
         });
-        centerPanel.add(new JLabel("Select card:"));
-        centerPanel.add(cardComboBox);
-
-        add(centerPanel, BorderLayout.CENTER);
-
-        // Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        payButton = new JButton("Pay");
+        addCardButton = new JButton("Add Card");
+        addCardButton.addActionListener(e -> addCard());
+        buttonPanel.add(addCardButton);
+        payButton = new JButton("Add Card");
         cancelButton = new JButton("Cancel");
         buttonPanel.add(cancelButton);
-        buttonPanel.add(payButton);
+        if(cardComboBox.getItemCount() != 0){
+            centerPanel.add(new JLabel("Select card:"));
+            centerPanel.add(cardComboBox);
+            payButton = new JButton("Pay");
+            buttonPanel.add(payButton);
+        }
+
+        add(centerPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        // Actions
         cancelButton.addActionListener(e -> dispose());
         payButton.addActionListener(new ActionListener() {
             @Override
@@ -100,7 +97,7 @@ public class CheckoutDialog extends JDialog {
     private double calculateCartTotal() {
         double total = 0.0;
         for (CartItem item : cartItems) {
-            total += item.getItem().getPrice() * item.getQuantity();
+            total += item.getPrice() * item.getQuantity();
         }
         return total;
     }
@@ -162,6 +159,19 @@ public class CheckoutDialog extends JDialog {
 
     public TransactionRecord getLastTransaction() {
         return lastTransaction;
+    }
+
+    private void addCard() {
+        AddCardDialog addCardDialog = new AddCardDialog(this);
+        Card newCard = addCardDialog.getAddedCard();
+        if (newCard != null) {
+            cardComboBox.addItem(newCard);
+            cardComboBox.setSelectedItem(newCard);
+        }
+        initComponents();
+    }
+    public Customer getCustomer() {
+        return customer;
     }
 }
 

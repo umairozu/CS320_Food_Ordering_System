@@ -13,13 +13,13 @@ INSERT INTO User (email, password, user_type) VALUES
 
 -- ADDRESSES
 INSERT INTO Address (customer_id, address_line, city) VALUES
-(4, '123 Manager St', 'Istanbul'),
-(4, '456 Manager Ave', 'Istanbul'),
+(4, '123 Manager St', 'İstanbul'),
+(4, '456 Manager Ave', 'İstanbul'),
 (5, '789 Manager Rd', 'Ankara'),
-(5, '101 Customer Ln', 'Istanbul'),
-(6, '202 Customer Dr', 'Istanbul'),
+(5, '101 Customer Ln', 'İstanbul'),
+(6, '202 Customer Dr', 'İstanbul'),
 (7, '303 Customer Blvd', 'Ankara'),
-(8, '404 Customer Cir', 'Istanbul'),
+(8, '404 Customer Cir', 'İstanbul'),
 (8, '505 Customer Way', 'Ankara');
 
 -- PHONES
@@ -35,9 +35,9 @@ INSERT INTO Phone (customer_id, phone_number) VALUES
 
 -- RESTAURANTS
 INSERT INTO Restaurant (manager_id, name, cuisine_type, city) VALUES
-(1, 'Pizza Palace', 'Italian', 'Istanbul'),
-(1, 'Sushi Stop', 'Japanese', 'Istanbul'),
-(2, 'Burger Bonanza', 'American', 'Istanbul'),
+(1, 'Pizza Palace', 'Italian', 'İstanbul'),
+(1, 'Sushi Stop', 'Japanese', 'İstanbul'),
+(2, 'Burger Bonanza', 'American', 'İstanbul'),
 (3, 'Kebab King', 'Turkish', 'Ankara'),
 (3, 'Taco Town', 'Mexican', 'Ankara');
 
@@ -74,17 +74,17 @@ VALUES
 (4, 'Sushi Special', '15% off rolls', 15.00, '2025-04-01 00:00:00', '2025-12-30 23:59:59');
 
 -- ORDERS
-INSERT INTO `Order` (customer_id, restaurant_id, order_status, order_date, delivery_address_id) VALUES
-(4, 1, 'delivered', '2025-04-10 12:00:00', 4),
-(4, 2, 'delivered', '2025-04-10 13:00:00', 4),
-(5, 3, 'delivered', '2025-04-10 14:00:00', 5),
-(5, 4, 'delivered', '2025-04-10 15:00:00', 5),
-(6, 5, 'delivered', '2025-04-10 16:00:00', 6),
-(6, 1, 'delivered', '2025-04-11 12:00:00', 6),
-(7, 2, 'delivered', '2025-04-11 13:00:00', 7),
-(7, 3, 'delivered', '2025-04-11 14:00:00', 7),
-(8, 4, 'delivered', '2025-04-11 15:00:00', 8),
-(8, 5, 'delivered', '2025-04-11 16:00:00', 8);
+INSERT INTO `Order` (customer_id, restaurant_id, order_status, order_date, delivery_address_id, phone_number) VALUES
+(4, 1, 'delivered', '2025-04-10 12:00:00', 4, '555-0101'),
+(4, 2, 'delivered', '2025-04-10 13:00:00', 4, '555-0102'),
+(5, 3, 'delivered', '2025-04-10 14:00:00', 5, '555-0103'),
+(5, 4, 'delivered', '2025-04-10 15:00:00', 5, '555-0104'),
+(6, 5, 'delivered', '2025-04-10 16:00:00', 6, '555-0105'),
+(6, 1, 'delivered', '2025-04-11 12:00:00', 6, '555-0106'),
+(7, 2, 'delivered', '2025-04-11 13:00:00', 7, '555-0107'),
+(7, 3, 'delivered', '2025-04-11 14:00:00', 7, '555-0107'),
+(8, 4, 'delivered', '2025-04-11 15:00:00', 8, '555-0108'),
+(8, 5, 'delivered', '2025-04-11 16:00:00', 8, '555-0108');
 
 -- ORDER ITEMS
 INSERT INTO CartItem (order_id, menu_item_id, price, quantity) VALUES

@@ -11,6 +11,7 @@ public interface IAccountService {
     void changePassword(User user, String newPassword);
     void addPhoneNumber(Customer customer, String phone);
     void addAddress(Customer customer, Address address);
+    void addCardToCustomer(Customer customer, Card card);
     List<Address> getAddresses(Customer customer);
 
     ArrayList<String> fetchCustomerPhoneNumbers(Customer customer);

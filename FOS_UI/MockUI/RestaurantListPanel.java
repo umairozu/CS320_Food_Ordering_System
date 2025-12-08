@@ -12,7 +12,8 @@ public class RestaurantListPanel extends JPanel {
     private JPanel restaurantPanel;
     private JComboBox<String> cityDropdown;
     private JTextField searchField;
-    ArrayList<Restaurant> restaurants;
+    private ArrayList<Restaurant> restaurants;
+    private String selectedAddress;
 
     public RestaurantListPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -24,12 +25,8 @@ public class RestaurantListPanel extends JPanel {
 
         JPanel topPanel = new JPanel(new FlowLayout());
         topPanel.add(new JLabel("City:"));
-        Address[] addresses = mainFrame.getCurrentCustomer().getAddresses().toArray(new Address[0]);
-        String[] addressStrings = new String[addresses.length];
-        for (int i = 0; i < addresses.length; i++) {
-            addressStrings[i] = addresses[i].toString();
-        }
-        cityDropdown = new JComboBox<>(addressStrings);
+        cityDropdown = new JComboBox<>(getCustomerAddresses());
+        selectedAddress = cityDropdown.getItemAt(0);
         topPanel.add(cityDropdown);
         topPanel.add(new JLabel("Keyword:"));
         searchField = new JTextField(15);
@@ -48,8 +45,7 @@ public class RestaurantListPanel extends JPanel {
 
     public void refresh() {
         restaurantPanel.removeAll();
-        String address = cityDropdown.getItemAt(0);
-        String city = extractCityFromAddress(address);
+        String city = extractCityFromAddress(selectedAddress);
         if (!city.isEmpty()) {
             loadRestaurantsByCity(city);
         }
@@ -58,8 +54,8 @@ public class RestaurantListPanel extends JPanel {
     }
 
     private void searchByCity() {
-        String address = cityDropdown.getSelectedItem().toString();
-        String city = extractCityFromAddress(address);
+        selectedAddress = cityDropdown.getSelectedItem().toString();
+        String city = extractCityFromAddress(selectedAddress);
         if (city.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please enter a city name.", "Validation Error", JOptionPane.WARNING_MESSAGE);
             return;
@@ -142,6 +138,17 @@ public class RestaurantListPanel extends JPanel {
             return parts[1].trim();
         }
         return "";
+    }
+    private String[] getCustomerAddresses() {
+        List<Address> addresses = mainFrame.getCurrentCustomer().getAddresses();
+        String[] addressStrings = new String[addresses.size()];
+        for (int i = 0; i < addresses.size(); i++) {
+            addressStrings[i] = addresses.get(i).toString();
+        }
+        return addressStrings;
+    }
+    public String getSelectedAddress() {
+        return selectedAddress;
     }
 }
 

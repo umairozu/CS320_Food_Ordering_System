@@ -73,6 +73,13 @@ public class AccountService implements IAccountService {
     public ArrayList<Address> fetchCustomerAddresses(Customer customer){
         return DB.fetchCustomerAddresses(customer);
     }
+    public void addCardToCustomer(Customer customer, Card card) {
+        if (DB.addCardToCustomer(customer, card)) {
+            customer.getCards().add(card);
+        } else {
+            throw new IllegalStateException("Failed to add card to customer");
+        }
+    }
 
     @Override
     public User login(String email, String password) {

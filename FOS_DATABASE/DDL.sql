@@ -69,9 +69,11 @@ CREATE TABLE `Order` (
     order_id INT AUTO_INCREMENT PRIMARY KEY,
     customer_id INT NOT NULL,
     restaurant_id INT NOT NULL,
+    phone_number VARCHAR(15) NOT NULL,
     order_status ENUM('pending', 'preparing', 'sent', 'delivered') NOT NULL default 'preparing',
     order_date DATETIME NOT NULL,
     delivery_address_id INT NOT NULL,
+    FOREIGN KEY (phone_number) REFERENCES Phone(phone_number) ON DELETE CASCADE,
     FOREIGN KEY (customer_id) REFERENCES User(user_id) ON DELETE CASCADE,
     FOREIGN KEY (restaurant_id) REFERENCES Restaurant(restaurant_id) ON DELETE CASCADE,
     FOREIGN KEY (delivery_address_id) REFERENCES Address(address_id) ON DELETE CASCADE
