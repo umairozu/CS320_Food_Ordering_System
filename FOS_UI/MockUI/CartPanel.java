@@ -5,7 +5,6 @@ import FOS_CORE.MenuItem;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class CartPanel extends JPanel {
     private MainFrame mainFrame;
@@ -94,7 +93,7 @@ public class CartPanel extends JPanel {
         card.setPreferredSize(new Dimension(600, 150));
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
 
-        MenuItem item = cartItem.getItem();
+        MenuItem item = cartItem.getMenuItem();
         JLabel nameLabel = new JLabel(item.getItemName());
         nameLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
         JPanel quantityPanel = new JPanel(new FlowLayout());
@@ -144,27 +143,11 @@ public class CartPanel extends JPanel {
         Address selectedAddress = getSelectedAddress();
         CheckoutDialog checkoutDialog = new CheckoutDialog(
                 mainFrame,
-                customer,
-                customer.getCart(),
                 selectedAddress,
                 restaurant,
                 selectedPhoneNumber
         );
         checkoutDialog.setVisible(true);
-
-        TransactionRecord transaction = checkoutDialog.getLastTransaction();
-        if (transaction != null && transaction.getStatus() == PaymentStatus.SUCCESS) {
-            // Place order
-            try {
-                OrderService orderService = mainFrame.getOrderService();
-                Order order = orderService.placeOrder(customer, customer.getCart(), selectedAddress);
-                customer.getCart().clear();
-                JOptionPane.showMessageDialog(this, "Order placed successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                refresh();
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Failed to place order: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
     }
     public void setRestaurant(Restaurant restaurant) {
         this.restaurant = restaurant;

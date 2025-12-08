@@ -147,7 +147,7 @@ public class OrderManagementWindow extends JFrame {
 
         for (CartItem item : selected.getItems())
         {
-            MenuItem mi = item.getItem();
+            MenuItem mi = item.getMenuItem();
 
             String name = (mi != null) ? mi.getItemName() : "Unknown Item";
 

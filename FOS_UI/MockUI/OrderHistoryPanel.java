@@ -5,6 +5,7 @@ import FOS_CORE.*;
 import javax.swing.*;
 import java.awt.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderHistoryPanel extends JPanel {
@@ -37,7 +38,7 @@ public class OrderHistoryPanel extends JPanel {
         if (customer == null) {
             ordersPanel.add(new JLabel("Please log in to view orders."));
         } else {
-            List<Order> orders = customer.getOrders();
+            ArrayList<Order> orders = customer.getOrders();
             if (orders == null || orders.isEmpty()) {
                 ordersPanel.add(new JLabel("No orders found."));
             } else {
@@ -66,18 +67,22 @@ public class OrderHistoryPanel extends JPanel {
         JLabel dateLabel = new JLabel("Date: " + dateFormat.format(order.getCreationDate()));
         JLabel statusLabel = new JLabel("Status: " + order.getStatus());
         JLabel restaurantLabel = new JLabel("Restaurant: " + order.getRestaurantName());
+        JLabel cardNumberLabel = new JLabel("Paid with Card: **** **** **** " + order.getCardNumber().substring(order.getCardNumber().length() - 4));
+        JLabel phoneLabel = new JLabel("Contact Phone: " + order.getPhoneNumber());
 
-        JPanel infoPanel = new JPanel(new GridLayout(4, 1));
+        JPanel infoPanel = new JPanel(new GridLayout(-1, 1));
         infoPanel.add(orderIdLabel);
         infoPanel.add(dateLabel);
         infoPanel.add(statusLabel);
         infoPanel.add(restaurantLabel);
+        infoPanel.add(cardNumberLabel);
+        infoPanel.add(phoneLabel);
 
         JTextArea itemsArea = new JTextArea(3, 30);
         itemsArea.setEditable(false);
         StringBuilder itemsText = new StringBuilder("Items:\n");
         for (CartItem item : order.getItems()) {
-            itemsText.append(String.format("  - %s x%d\n", item.getItem().getItemName(), item.getQuantity()));
+            itemsText.append(String.format("  - %s x%d\n", item.getMenuItem().getItemName(), item.getQuantity()));
         }
         itemsArea.setText(itemsText.toString());
 

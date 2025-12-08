@@ -1,7 +1,8 @@
 package FOS_CORE;
 
-import java.util.ArrayList;
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 
 public class ManagerService implements IManagerService {
 
@@ -98,7 +99,7 @@ public class ManagerService implements IManagerService {
     }
 
     @Override
-    public void createDiscount(Manager manager, MenuItem item, String description, double percentage, Date startDate, Date endDate) {
+    public void createDiscount(Manager manager, MenuItem item, String description, double percentage, Timestamp startDate, Timestamp endDate) {
         if (manager == null || item == null) {
             throw new IllegalArgumentException("Manager and menu item must not be null");
         }
@@ -112,8 +113,8 @@ public class ManagerService implements IManagerService {
         // Ensure no overlapping discounts for this menu item
         for (Discount existing : item.getDiscounts()) {
             if (existing == null) continue;
-            Date exStart = existing.getStartDate();
-            Date exEnd = existing.getEndDate();
+            Timestamp exStart = existing.getStartDate();
+            Timestamp exEnd = existing.getEndDate();
             if (exStart == null || exEnd == null) continue;
             // overlap if newStart <= exEnd && newEnd >= exStart
             if (!endDate.before(exStart) && !startDate.after(exEnd)) {

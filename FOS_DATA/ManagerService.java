@@ -78,8 +78,8 @@ public class ManagerService extends UserData implements IManagerService {
             statement.setString(2, discount.getDiscountName());
             statement.setString(3, discount.getDescription());
             statement.setDouble(4, discount.getDiscountPercentage());
-            statement.setDate(5, new java.sql.Date(discount.getStartDate().getTime()));
-            statement.setDate(6, new java.sql.Date(discount.getEndDate().getTime()));
+            statement.setTimestamp(5, new Timestamp(discount.getStartDate().getTime()));
+            statement.setTimestamp(6, new Timestamp(discount.getEndDate().getTime()));
             int rowsAffected = statement.executeUpdate();
             sql = "SELECT LAST_INSERT_ID() AS discount_id";
             ResultSet resultSet = statement.executeQuery(sql);
@@ -94,7 +94,7 @@ public class ManagerService extends UserData implements IManagerService {
     public ArrayList<Order> fetchRestaurantOrders(Restaurant restaurant) {
         int restaurantId = restaurant.getRestaurantID();
         ArrayList<Order> orders = new ArrayList<>();
-        String sql = "SELECT o.order_id, o.order_date, o.status, \n" +
+        String sql = "SELECT o.order_id, o.order_date, o.status, o.phone_number, o.card_no\n" +
                 "                       a.address_id,\n" +
                 "                       rt.rating_value, rt.rating_comment\n" +
                 "                FROM Order o\n" +
@@ -110,16 +110,18 @@ public class ManagerService extends UserData implements IManagerService {
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     int order_id = resultSet.getInt("order_id");
-                    Date date = resultSet.getDate("order_date");
+                    Timestamp date = resultSet.getTimestamp("order_date");
                     OrderStatus status = OrderStatus.valueOf(resultSet.getString("status"));
                     int ratingValue = resultSet.getInt("rating_value");
                     String ratingComment = resultSet.getString("rating_comment");
                     Rating rating = new Rating(ratingValue, ratingComment);
                     int addressId = resultSet.getInt("address_id");
+                    String phoneNumber = resultSet.getString("phone_number");
+                    String cardNo = resultSet.getString("card_no");
                     String deliveryAddress = fetchAddressDetails(addressId);
                     String restaurantName = restaurant.getRestaurantName();
                     ArrayList<CartItem> items = fetchOrderItemsByOrderID(order_id);
-                    orders.add(new Order(deliveryAddress, items, date, status, restaurantName, order_id, rating));
+                    orders.add(new Order(deliveryAddress, items, date, status, restaurantName, order_id, rating, phoneNumber, cardNo));
                 }
             } catch (SQLException e) {
                 System.out.println("Database failed to fetch Restaurant orders");
@@ -231,10 +233,10 @@ public class ManagerService extends UserData implements IManagerService {
                 String discountName = resultSet.getString("discount_name");
                 String discountDescription = resultSet.getString("discount_description");
                 double percentage = resultSet.getDouble("discount_percentage");
-                Date startDate = resultSet.getDate("start_date");
-                Date endDate = resultSet.getDate("end_date");
+                Timestamp startDate = resultSet.getTimestamp("start_date");
+                Timestamp endDate = resultSet.getTimestamp("end_date");
                 long millis= System.currentTimeMillis();
-                Date currentDate = new Date(millis);
+                Timestamp currentDate = new Timestamp(millis);
                 Discount discount = new Discount(discountID, discountName, discountDescription, percentage, startDate, endDate);
                 discounts.add(discount);
                 }

@@ -1,5 +1,6 @@
 package FOS_CORE;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.sql.Date;
 
@@ -12,5 +13,5 @@ public interface IManagerService {
     ArrayList<Order> viewIncomingOrders(Manager manager);
     void updateOrderStatus(Order order, String status);
     String generateMonthlyReport(Manager manager, Restaurant restaurant, Date date);
-    void createDiscount(Manager manager, MenuItem item, String description, double percentage, Date startDate, Date endDate);
+    void createDiscount(Manager manager, MenuItem item, String description, double percentage, Timestamp startDate, Timestamp endDate);
 }

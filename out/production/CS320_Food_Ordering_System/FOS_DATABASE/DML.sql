@@ -73,18 +73,30 @@ VALUES
 (1, 'Pizza Deal', '10% off pizzas', 10.00, '2025-04-01 00:00:00', '2025-12-30 23:59:59'),
 (4, 'Sushi Special', '15% off rolls', 15.00, '2025-04-01 00:00:00', '2025-12-30 23:59:59');
 
+-- CARDS
+INSERT INTO Card (customer_id, card_no, card_holder_name, expiry_date, cvv) VALUES
+(4, '1111222233334444', 'Customer One', '2027-12-31', '123'),
+(5, '5555666677778888', 'Customer Two', '2026-06-30', '456');
+
 -- ORDERS
-INSERT INTO `Order` (customer_id, restaurant_id, order_status, order_date, delivery_address_id, phone_number) VALUES
-(4, 1, 'delivered', '2025-04-10 12:00:00', 4, '555-0101'),
-(4, 2, 'delivered', '2025-04-10 13:00:00', 4, '555-0102'),
-(5, 3, 'delivered', '2025-04-10 14:00:00', 5, '555-0103'),
-(5, 4, 'delivered', '2025-04-10 15:00:00', 5, '555-0104'),
-(6, 5, 'delivered', '2025-04-10 16:00:00', 6, '555-0105'),
-(6, 1, 'delivered', '2025-04-11 12:00:00', 6, '555-0106'),
-(7, 2, 'delivered', '2025-04-11 13:00:00', 7, '555-0107'),
-(7, 3, 'delivered', '2025-04-11 14:00:00', 7, '555-0107'),
-(8, 4, 'delivered', '2025-04-11 15:00:00', 8, '555-0108'),
-(8, 5, 'delivered', '2025-04-11 16:00:00', 8, '555-0108');
+INSERT INTO `Order`
+(customer_id, restaurant_id, phone_number, order_status, order_date, delivery_address_id, card_no)
+VALUES
+(4, 1, '555-0101', 'delivered', '2025-04-10 12:00:00', 4, '1111222233334444'),
+(4, 2, '555-0102', 'delivered', '2025-04-10 13:00:00', 4, '1111222233334444'),
+
+(5, 3, '555-0103', 'delivered', '2025-04-10 14:00:00', 5, '5555666677778888'),
+(5, 4, '555-0104', 'delivered', '2025-04-10 15:00:00', 5, '5555666677778888'),
+
+(6, 5, '555-0105', 'delivered', '2025-04-10 16:00:00', 6, NULL),
+(6, 1, '555-0106', 'delivered', '2025-04-11 12:00:00', 6, NULL),
+
+(7, 2, '555-0107', 'delivered', '2025-04-11 13:00:00', 7, NULL),
+(7, 3, '555-0107', 'delivered', '2025-04-11 14:00:00', 7, NULL),
+
+(8, 4, '555-0108', 'delivered', '2025-04-11 15:00:00', 8, NULL),
+(8, 5, '555-0108', 'delivered', '2025-04-11 16:00:00', 8, NULL);
+
 
 -- ORDER ITEMS
 INSERT INTO CartItem (order_id, menu_item_id, price, quantity) VALUES
@@ -113,7 +125,3 @@ INSERT INTO Rating (order_id, rating_value, rating_comment) VALUES
 (10, 4, 'Nice guacamole'),
 (5, 4, 'Good service');
 
--- CARDS
-INSERT INTO Card (customer_id, card_no, card_holder_name, expiry_date, cvv) VALUES
-(4, '1111222233334444', 'Customer One', '2027-12-31', '123'),
-(5, '5555666677778888', 'Customer Two', '2026-06-30', '456');

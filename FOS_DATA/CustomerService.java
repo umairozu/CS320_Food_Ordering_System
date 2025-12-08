@@ -216,7 +216,7 @@ public class CustomerService extends UserData implements ICustomerService {
     public ArrayList<Order> fetchCustomerOrders(Customer customer) {
         int customerId = customer.getUserID();
         ArrayList<Order> orders = new ArrayList<>();
-        String sql = "SELECT o.order_id, o.order_date, o.order_status, " +
+        String sql = "SELECT o.order_id, o.order_date, o.order_status, o.phone_number, o.card_no, " +
                     "r.name AS restaurant_name, a.address_id, " +
                     "rt.rating_value, rt.rating_comment " +
                     "FROM `Order` o " +
@@ -231,7 +231,7 @@ public class CustomerService extends UserData implements ICustomerService {
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     int order_id = resultSet.getInt("order_id");
-                    Date date = resultSet.getDate("order_date");
+                    Timestamp date = resultSet.getTimestamp("order_date");
                     OrderStatus status = OrderStatus.valueOf(resultSet.getString("order_status").toUpperCase());
                     int ratingValue = resultSet.getInt("rating_value");
                     String ratingComment = resultSet.getString("rating_comment");
@@ -239,8 +239,10 @@ public class CustomerService extends UserData implements ICustomerService {
                     int addressId = resultSet.getInt("address_id");
                     String addressDetails = fetchAddressDetails(addressId);
                     String restaurantName = resultSet.getString("restaurant_name");
+                    String phoneNumber = resultSet.getString("phone_number");
+                    String cardNumber = resultSet.getString("card_no");
                     ArrayList<CartItem> items = fetchOrderItemsByOrderID(order_id);
-                    Order order = new Order(addressDetails, items, date, status, restaurantName, order_id, rating);
+                    Order order = new Order(addressDetails, items, date, status, restaurantName, order_id, rating, phoneNumber, cardNumber);
                     orders.add(order);
                 }
             } catch (SQLException e){
@@ -253,27 +255,49 @@ public class CustomerService extends UserData implements ICustomerService {
     }
     public boolean insertCustomerOrder(Customer customer,Address address, Order order, Restaurant restaurant) {
         int customerId = customer.getUserID();
+        String phoneNumber = order.getPhoneNumber();
+        String cardNumber = order.getCardNumber();
         int restaurantId = restaurant.getRestaurantID();
         int deliveryAddressId = address.getAddressID();
-        final String sql = "INSERT INTO Orders (customer_id, order_date, restaurant_id, delivery_address_id) VALUES (?, ?, ?, ?)";
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, customerId);
-            statement.setDate(2, new Date(order.getCreationDate().getTime()));
-            statement.setInt(3, restaurantId);
-            statement.setInt(4, deliveryAddressId);
-            int rowsAffected = statement.executeUpdate();
-            if (rowsAffected > 0) {
-                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        int orderId = generatedKeys.getInt(1);
-                        order.setOrderID(orderId);
-                        return true;
+        final String sql = "INSERT INTO `Order` (customer_id, order_date, restaurant_id, delivery_address_id, phone_number, card_no) VALUES (?, ?, ?, ?, ?, ?)";
+        final String insertCartItemSQL = "INSERT INTO CartItem (order_id, menu_item_id, quantity, price) VALUES (?, ?, ?, ?)";
+        try (Connection connection = DatabaseConnection.getConnection()){
+            connection.setAutoCommit(false);
+            try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                statement.setInt(1, customerId);
+                statement.setTimestamp(2, new Timestamp(order.getCreationDate().getTime()));
+                statement.setInt(3, restaurantId);
+                statement.setInt(4, deliveryAddressId);
+                statement.setString(5, phoneNumber);
+                statement.setString(6, cardNumber);
+                int rowsAffected = statement.executeUpdate();
+                if (rowsAffected > 0) {
+                    try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            int orderId = generatedKeys.getInt(1);
+                            order.setOrderID(orderId);
+                            try (PreparedStatement cartItemStatement = connection.prepareStatement(insertCartItemSQL)) {
+                                for (CartItem item : order.getItems()) {
+                                    cartItemStatement.setInt(1, orderId);
+                                    cartItemStatement.setInt(2, item.getMenuItem().getMenuItemID());
+                                    cartItemStatement.setInt(3, item.getQuantity());
+                                    cartItemStatement.setDouble(4, item.getPrice());
+                                    cartItemStatement.addBatch();
+                                }
+                                cartItemStatement.executeBatch();
+                            }
+                            connection.commit();
+                            return true;
+                        }
                     }
                 }
+            } catch (SQLException e) {
+                connection.rollback();
+                System.out.println("Database failed to add order to customer" + e.getMessage());
+                return false;
             }
         } catch (SQLException e) {
-            System.out.println("Database failed to add order to customer");
+            System.out.println("Database failed to add order to customer" + e.getMessage());
         }
         return false;
     }
@@ -354,8 +378,8 @@ public class CustomerService extends UserData implements ICustomerService {
                 String discountName = resultSet.getString("discount_name");
                 String discountDescription = resultSet.getString("discount_description");
                 double percentage = resultSet.getDouble("discount_percentage");
-                Date startDate = resultSet.getDate("start_date");
-                Date endDate = resultSet.getDate("end_date");
+                Timestamp startDate = resultSet.getTimestamp("start_date");
+                Timestamp endDate = resultSet.getTimestamp("end_date");
                 discounts.add(new Discount(discountId,discountName, discountDescription, percentage, startDate, endDate));
             }
         } catch (SQLException e) {

@@ -58,22 +58,32 @@ CREATE TABLE Discount (
     discount_name VARCHAR(50) NOT NULL,
     discount_description TEXT,
     discount_percentage DECIMAL(5,2) NOT NULL,
-    start_date DATETIME NOT NULL,
-    end_date DATETIME NOT NULL,
+    start_date timestamp NOT NULL,
+    end_date timestamp NOT NULL,
     CONSTRAINT discount_percentage_chk CHECK (discount_percentage >= 0 AND discount_percentage <= 100),
     FOREIGN KEY (menu_item_id) REFERENCES MenuItem(menu_item_id) ON DELETE CASCADE
 );
 
+CREATE TABLE Card (
+    customer_id INT,
+    card_no CHAR(16) PRIMARY KEY,
+    card_holder_name VARCHAR(100) NOT NULL,
+    expiry_date DATE NOT NULL,
+    cvv CHAR(3) NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES User(user_id) ON DELETE CASCADE
+);
 
 CREATE TABLE `Order` (
     order_id INT AUTO_INCREMENT PRIMARY KEY,
     customer_id INT NOT NULL,
     restaurant_id INT NOT NULL,
-    phone_number VARCHAR(15) NOT NULL,
+    phone_number VARCHAR(15),
     order_status ENUM('pending', 'preparing', 'sent', 'delivered') NOT NULL default 'preparing',
-    order_date DATETIME NOT NULL,
+    order_date Timestamp NOT NULL,
     delivery_address_id INT NOT NULL,
-    FOREIGN KEY (phone_number) REFERENCES Phone(phone_number) ON DELETE CASCADE,
+    card_no CHAR(16),
+    FOREIGN KEY (card_no) REFERENCES Card(card_no) ON DELETE SET NULL,
+    FOREIGN KEY (phone_number) REFERENCES Phone(phone_number) ON DELETE SET NULL,
     FOREIGN KEY (customer_id) REFERENCES User(user_id) ON DELETE CASCADE,
     FOREIGN KEY (restaurant_id) REFERENCES Restaurant(restaurant_id) ON DELETE CASCADE,
     FOREIGN KEY (delivery_address_id) REFERENCES Address(address_id) ON DELETE CASCADE
@@ -95,13 +105,4 @@ CREATE TABLE Rating (
     rating_comment TEXT,
     PRIMARY KEY (order_id),
     FOREIGN KEY (order_id) REFERENCES `Order`(order_id) ON DELETE CASCADE
-);
-
-CREATE TABLE Card (
-    customer_id INT,
-    card_no CHAR(16) PRIMARY KEY,
-    card_holder_name VARCHAR(100) NOT NULL,
-    expiry_date DATE NOT NULL,
-    cvv CHAR(3) NOT NULL,
-    FOREIGN KEY (customer_id) REFERENCES User(user_id) ON DELETE CASCADE
 );

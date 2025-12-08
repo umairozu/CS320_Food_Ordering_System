@@ -2,24 +2,24 @@ package FOS_CORE;
 
 public class CartItem {
 
-    private MenuItem item;
+    private MenuItem menuItem;
     private int quantity;
     private double price;
 
     public CartItem() { }
 
-    public CartItem(MenuItem item, int quantity, double price) {
-        this.item = item;
+    public CartItem(MenuItem menuItem, int quantity, double price) {
+        this.menuItem = menuItem;
         this.quantity = quantity;
         this.price = price;
     }
 
-    public MenuItem getItem() {
-        return item;
+    public MenuItem getMenuItem() {
+        return menuItem;
     }
 
-    public void setItem(MenuItem item) {
-        this.item = item;
+    public void setMenuItem(MenuItem item) {
+        this.menuItem = item;
     }
 
     public int getQuantity() {

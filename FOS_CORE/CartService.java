@@ -10,7 +10,7 @@ public class CartService implements ICartService {
         ArrayList<CartItem> cart = customer.getCart();
         boolean itemExistsInCart = false;
         for(CartItem cartItemTemp: cart){
-            if(cartItemTemp.getItem().getMenuItemID() == item.getMenuItemID()){
+            if(cartItemTemp.getMenuItem().getMenuItemID() == item.getMenuItemID()){
                 int newQuantity = cartItemTemp.getQuantity() + quantity;
                 if(newQuantity > 10) {
                     cartItemTemp.setQuantity(10);
@@ -29,7 +29,7 @@ public class CartService implements ICartService {
     public boolean removeFromCart(Customer customer, MenuItem item) {
         ArrayList<CartItem> cart = customer.getCart();
         for (CartItem cartItem : cart) {
-            if (cartItem.getItem().getMenuItemID() == item.getMenuItemID()) {
+            if (cartItem.getMenuItem().getMenuItemID() == item.getMenuItemID()) {
                 cart.remove(cartItem);
                 return true;
             }
@@ -41,7 +41,7 @@ public class CartService implements ICartService {
     public void updateCartItemQuantity(Customer cart, MenuItem item, int newQuantity) {
         ArrayList<CartItem> customerCart = cart.getCart();
         for (CartItem cartItem : customerCart) {
-            if (cartItem.getItem().getMenuItemID() == item.getMenuItemID()) {
+            if (cartItem.getMenuItem().getMenuItemID() == item.getMenuItemID()) {
                 cartItem.setQuantity(newQuantity);
                 return;
             }

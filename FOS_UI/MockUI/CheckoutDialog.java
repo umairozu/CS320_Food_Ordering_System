@@ -6,15 +6,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CheckoutDialog extends JDialog {
 
-    private final Customer customer;
-    private final List<CartItem> cartItems;
     private final Address deliveryAddress;
     private final Restaurant restaurant;
     private final String selectedPhoneNumber;
+    private final MainFrame mainFrame;
 
     private JComboBox<Card> cardComboBox;
     private JLabel totalLabel;
@@ -22,17 +22,12 @@ public class CheckoutDialog extends JDialog {
     private JButton cancelButton;
     private JButton addCardButton;
 
-    private TransactionRecord lastTransaction;
-
-    public CheckoutDialog(Frame owner,
-                          Customer customer,
-                          List<CartItem> cartItems,
+    public CheckoutDialog(MainFrame owner,
                           Address deliveryAddress,
                           Restaurant restaurant,
                           String selectedPhoneNumber) {
         super(owner, "Checkout", true);
-        this.customer = customer;
-        this.cartItems = cartItems;
+        this.mainFrame = owner;
         this.deliveryAddress = deliveryAddress;
         this.restaurant = restaurant;
         this.selectedPhoneNumber = selectedPhoneNumber;
@@ -51,7 +46,7 @@ public class CheckoutDialog extends JDialog {
         centerPanel.add(totalLabel);
 
         cardComboBox = new JComboBox<>();
-        for (Card card : customer.getCards()) {
+        for (Card card : mainFrame.getCurrentCustomer().getCards()) {
             cardComboBox.addItem(card);
         }
         cardComboBox.setRenderer(new DefaultListCellRenderer() {
@@ -96,7 +91,7 @@ public class CheckoutDialog extends JDialog {
 
     private double calculateCartTotal() {
         double total = 0.0;
-        for (CartItem item : cartItems) {
+        for (CartItem item : mainFrame.getCurrentCustomer().getCart()) {
             total += item.getPrice() * item.getQuantity();
         }
         return total;
@@ -119,46 +114,20 @@ public class CheckoutDialog extends JDialog {
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
-
-        double totalAmount = calculateCartTotal();
-
-        IPaymentService paymentService = new PaymentService();
-        IPaymentDetails paymentDetails = new PaymentDetails(customer, selectedCard, totalAmount);
-
+        Order order = new Order(deliveryAddress.toString(), (ArrayList<CartItem>) mainFrame.getCurrentCustomer().getCart().clone(), restaurant.getRestaurantName(), selectedPhoneNumber, selectedCard.getCardNumber());
         try {
-            TransactionRecord record = paymentService.processPayment(paymentDetails, totalAmount);
-            this.lastTransaction = record;
-
-            if (record.getStatus() == PaymentStatus.SUCCESS) {
-                JOptionPane.showMessageDialog(this,
-                        "Payment successful.\nTransaction ID: " + record.getTransactionID(),
-                        "Success",
-                        JOptionPane.INFORMATION_MESSAGE);
-                // In a full implementation, you would now:
-                // 1. Create an Order instance from cartItems + deliveryAddress + restaurant
-                // 2. Persist it via OrderService/UserDataAccess
-                dispose();
-            } else {
-                JOptionPane.showMessageDialog(this,
-                        "Payment failed: " + record.getMessage(),
-                        "Payment Failed",
-                        JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(this,
-                    "Validation error: " + ex.getMessage(),
-                    "Payment Error",
-                    JOptionPane.ERROR_MESSAGE);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this,
-                    "Unexpected error during payment: " + ex.getMessage(),
-                    "Payment Error",
-                    JOptionPane.ERROR_MESSAGE);
+            mainFrame.getOrderService().placeOrder(
+                     mainFrame.getCurrentCustomer(),
+                    deliveryAddress,order,
+                    restaurant
+            );
+            mainFrame.getCurrentCustomer().getCart().clear();
+            dispose();
+            mainFrame.showOrderHistory();
+            JOptionPane.showMessageDialog(this, "Order placed successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Failed to place order: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    public TransactionRecord getLastTransaction() {
-        return lastTransaction;
     }
 
     private void addCard() {
@@ -169,9 +138,6 @@ public class CheckoutDialog extends JDialog {
             cardComboBox.setSelectedItem(newCard);
         }
         initComponents();
-    }
-    public Customer getCustomer() {
-        return customer;
     }
 }
 

@@ -1,13 +1,19 @@
 package FOS_CORE;
 
+import FOS_DATA.*;
+
 import java.util.ArrayList;
 
 public class OrderService implements IOrderService {
+    private final CustomerService DB = new CustomerService();
 
     @Override
-    public Order placeOrder(Customer customer, ArrayList<CartItem> cart, Address address) {
-        // TODO: Implementation
-        return null;
+    public void placeOrder(Customer customer,Address address, Order order, Restaurant restaurant) {
+        if(DB.insertCustomerOrder(customer,address,order,restaurant)){
+            customer.getOrders().add(0,order);
+        }else{
+            throw new IllegalStateException("Failed to place order");
+        }
     }
 
     @Override

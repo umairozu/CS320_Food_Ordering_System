@@ -23,8 +23,8 @@ public class RestaurantData implements IRestaurantData{
                 String discountName = resultSet.getString("discount_name");
                 String discountDescription = resultSet.getString("discount_description");
                 double percentage = resultSet.getDouble("discount_percentage");
-                Date startDate = resultSet.getDate("start_date");
-                Date endDate = resultSet.getDate("end_date");
+                Timestamp startDate = resultSet.getTimestamp("start_date");
+                Timestamp endDate = resultSet.getTimestamp("end_date");
                 long millis= System.currentTimeMillis();
                 Date currentDate = new Date(millis);
                 if (startDate.before(currentDate) && endDate.after(currentDate)) {

@@ -147,14 +147,14 @@ public class RestaurantMenuPanel extends JPanel {
         ArrayList<MenuItem> cartMenuItems = new ArrayList<>();
         List<MenuItem> menuItems = currentRestaurant.getMenu();
         for (CartItem cartItem : cartItems) {
-            cartMenuItems.add(cartItem.getItem());
+            cartMenuItems.add(cartItem.getMenuItem());
         }
         for(MenuItem cartMenuItem : cartMenuItems) {
             int counter = 0;
             for (MenuItem menuItem : menuItems) {
                 if(cartMenuItem.getMenuItemID() == menuItem.getMenuItemID()) {
                     counter++;
-                    continue;
+                    break;
                 }
             }
             if(counter == 0) {
