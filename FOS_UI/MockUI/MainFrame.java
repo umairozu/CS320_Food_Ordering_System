@@ -17,7 +17,7 @@ public class MainFrame extends JFrame {
     private RestaurantMenuPanel menuPanel;
     private CartPanel cartPanel;
     private OrderHistoryPanel orderHistoryPanel;
-    private AccountDetailsWindow accountDetailsPanel;
+    private AccountDetailsPanel accountDetailsPanel;
 
     public MainFrame() {
         super("Food Ordering System");
@@ -44,7 +44,7 @@ public class MainFrame extends JFrame {
         menuPanel = new RestaurantMenuPanel(this);
         cartPanel = new CartPanel(this);
         orderHistoryPanel = new OrderHistoryPanel(this);
-        accountDetailsPanel = new AccountDetailsWindow(this);
+        accountDetailsPanel = new AccountDetailsPanel(this);
 
         mainPanel.add(restaurantListPanel, "RESTAURANTS");
         mainPanel.add(menuPanel, "MENU");

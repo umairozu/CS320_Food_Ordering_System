@@ -4,12 +4,12 @@ import FOS_CORE.*;
 import javax.swing.*;
 import java.awt.*;
 
-public class AccountDetailsWindow extends JPanel {
+public class AccountDetailsPanel extends JPanel {
     private MainFrame mainFrame;
     private JLabel emailLabel;
     private JLabel phoneLabel;
 
-    public AccountDetailsWindow(MainFrame mainFrame) {
+    public AccountDetailsPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         initComponents();
     }
