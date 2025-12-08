@@ -95,8 +95,8 @@ public class RestaurantDetailsWindow extends JFrame{
             menuPanel.add(new JLabel("No menu items available."));
         } else {
             for (MenuItem item : menuItems) {
-                JPanel card = createMenuItemCard(item);
-                menuPanel.add(card);
+                //JPanel card = createMenuItemCard(item);
+                //menuPanel.add(card);
                 menuPanel.add(Box.createVerticalStrut(8));
             }
         }

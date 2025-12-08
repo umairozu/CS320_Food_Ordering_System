@@ -1,6 +1,8 @@
 package FOS_UI.MockUI;
 
 import FOS_CORE.*;
+import FOS_CORE.MenuItem;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -10,9 +12,11 @@ public class LoginDialog extends JDialog {
     private JPasswordField passwordField;
     private JButton loginButton;
     private JButton registerButton;
+    private MainFrame mainFrame;
 
-    public LoginDialog(Frame owner) {
+    public LoginDialog(MainFrame owner) {
         super(owner, "Food Ordering System - Login", true);
+        this.mainFrame = owner;
         initComponents();
         pack();
         setLocationRelativeTo(owner);

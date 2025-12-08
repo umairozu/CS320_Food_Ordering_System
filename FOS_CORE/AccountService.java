@@ -53,6 +53,14 @@ public class AccountService implements IAccountService {
 
         }
     }
+    @Override
+    public void removePhoneNumber(Customer customer, String phone){
+        if(DB.removePhoneNumberFromCustomer(customer, phone)){
+            customer.getPhoneNumbers().remove(phone);
+        } else {
+            throw new IllegalStateException("Failed to remove phone number from customer");
+        }
+    }
     //Working on it : Mohamed Khaled Becetti
     @Override
     public void addAddress(Customer customer, Address address) {

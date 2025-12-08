@@ -8,6 +8,7 @@ public class AccountDetailsPanel extends JPanel {
     private MainFrame mainFrame;
     private JLabel emailLabel;
     private JPanel orderHistoryPanel;
+    private JPanel phoneNumbersPanel;
 
     public AccountDetailsPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -53,22 +54,12 @@ public class AccountDetailsPanel extends JPanel {
         centerPanel1.add(orderButton);
         orderButton.addActionListener(e -> showOrderHistory());
         centerPanel1.add(phoneButton);
+        phoneButton.addActionListener(e -> {showPhoneNumbers();});
         centerPanel1.add(addressButton);
+        addressButton.addActionListener(e -> {showAddresses();});
         centerPanel1.add(cardButton);
+        cardButton.addActionListener(e -> {showCards();});
         centerPanel.add(centerPanel1);
-
-        orderButton.addActionListener(e -> {
-            // TODO: mainFrame.showOrders();
-        });
-        phoneButton.addActionListener(e -> {
-            // TODO: mainFrame.showPhoneNumbers();
-        });
-        addressButton.addActionListener(e -> {
-            // TODO: mainFrame.showAddresses();
-        });
-        cardButton.addActionListener(e -> {
-            // TODO: mainFrame.showCards();
-        });
 
 
         add(centerPanel, BorderLayout.CENTER);
@@ -88,5 +79,14 @@ public class AccountDetailsPanel extends JPanel {
     }
     public void showOrderHistory() {
         mainFrame.showOrderHistory();
+    }
+    public void showAddresses() {
+
+    }
+    public void showPhoneNumbers() {
+        mainFrame.showPhoneNumbers();
+    }
+    public void showCards() {
+        mainFrame.getCurrentCustomer().getCards();
     }
 }

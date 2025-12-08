@@ -10,6 +10,7 @@ public class MainFrame extends JFrame {
     private RestaurantService restaurantService;
     private CartService cartService;
     private OrderService orderService;
+    private AccountService accountService;
 
     private JPanel mainPanel;
     private CardLayout cardLayout;
@@ -18,12 +19,14 @@ public class MainFrame extends JFrame {
     private CartPanel cartPanel;
     private OrderHistoryPanel orderHistoryPanel;
     private AccountDetailsPanel accountDetailsPanel;
+    private PhoneNumbersPanel phoneNumbersPanel;
 
     public MainFrame() {
         super("Food Ordering System");
         restaurantService = new RestaurantService();
         cartService = new CartService();
         orderService = new OrderService();
+        accountService = new AccountService();
         showLogin();
     }
 
@@ -45,12 +48,14 @@ public class MainFrame extends JFrame {
         cartPanel = new CartPanel(this);
         orderHistoryPanel = new OrderHistoryPanel(this);
         accountDetailsPanel = new AccountDetailsPanel(this);
+        phoneNumbersPanel = new PhoneNumbersPanel(this);
 
         mainPanel.add(restaurantListPanel, "RESTAURANTS");
         mainPanel.add(menuPanel, "MENU");
         mainPanel.add(cartPanel, "CART");
         mainPanel.add(orderHistoryPanel, "ORDERS");
         mainPanel.add(accountDetailsPanel, "ACCOUNT DETAILS");
+        mainPanel.add(phoneNumbersPanel, "PHONE NUMBERS");
 
         add(mainPanel, BorderLayout.CENTER);
 
@@ -137,9 +142,15 @@ public class MainFrame extends JFrame {
         cardLayout.show(mainPanel, "ACCOUNT DETAILS");
     }
 
+    public void showPhoneNumbers() {
+        phoneNumbersPanel.refresh();
+        cardLayout.show(mainPanel, "PHONE NUMBERS");
+    }
+
     public void logout() {
-        currentCustomer = null;
-        setVisible(false);
+        this.setVisible(false);
+        this.dispose();
+        this.getContentPane().removeAll();
         showLogin();
     }
 
@@ -167,6 +178,7 @@ public class MainFrame extends JFrame {
     public RestaurantListPanel getRestaurantListPanel() {
         return restaurantListPanel;
     }
+    public AccountService getAccountService() {return accountService;}
 }
 
 

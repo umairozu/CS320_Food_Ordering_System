@@ -10,6 +10,7 @@ public interface IAccountService {
     Customer createCustomerAccount(String email, String phone, String password, Address address);
     void changePassword(User user, String newPassword);
     void addPhoneNumber(Customer customer, String phone);
+    void removePhoneNumber(Customer customer, String phone);
     void addAddress(Customer customer, Address address);
     void addCardToCustomer(Customer customer, Card card);
     List<Address> getAddresses(Customer customer);
