@@ -58,20 +58,16 @@ public class MainFrame extends JFrame {
         JMenu menu = new JMenu("Menu");
         JMenuItem restaurantsItem = new JMenuItem("Restaurants");
         JMenuItem cartItem = new JMenuItem("Cart");
-        JMenuItem ordersItem = new JMenuItem("Order History");
         JMenuItem accountItem = new JMenuItem("Account Details");
         JMenuItem logoutItem = new JMenuItem("Logout");
 
         restaurantsItem.addActionListener(e -> showRestaurants());
         cartItem.addActionListener(e -> showCart());
-        ordersItem.addActionListener(e -> showOrderHistory());
         accountItem.addActionListener(e -> showAccountDetails());
         logoutItem.addActionListener(e -> logout());
 
         menu.add(restaurantsItem);
         menu.add(cartItem);
-        menu.add(ordersItem);
-        menu.addSeparator();
         menu.add(accountItem);
         menu.addSeparator();
         menu.add(logoutItem);

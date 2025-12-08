@@ -7,7 +7,7 @@ import java.awt.*;
 public class AccountDetailsPanel extends JPanel {
     private MainFrame mainFrame;
     private JLabel emailLabel;
-    private JLabel phoneLabel;
+    private JPanel orderHistoryPanel;
 
     public AccountDetailsPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -17,43 +17,59 @@ public class AccountDetailsPanel extends JPanel {
     private void initComponents() {
         setLayout(new BorderLayout());
 
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel topPanel = new JPanel(new BorderLayout());
         JButton backButton = new JButton("Back to Restaurants");
         backButton.addActionListener(e -> mainFrame.showRestaurants());
-        topPanel.add(backButton);
-        add(topPanel, BorderLayout.NORTH);
-
-        JPanel centerPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.anchor = GridBagConstraints.WEST;
-
+        topPanel.add(backButton, BorderLayout.WEST);
         // Title
         JLabel titleLabel = new JLabel("Account Information");
         titleLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        centerPanel.add(titleLabel, gbc);
-        gbc.gridwidth = 1;
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        topPanel.add(titleLabel, BorderLayout.CENTER);
+        add(topPanel, BorderLayout.NORTH);
 
-        // Email
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        centerPanel.add(new JLabel("Email:"), gbc);
-        gbc.gridx = 1;
+        JPanel centerPanel = new JPanel(new GridLayout(4,1));
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 20)); // margin
+        GridLayout gridLayout = new GridLayout(-1,2);
+        gridLayout.setHgap(20);
+        gridLayout.setVgap(20);
+        JPanel centerPanel1 = new JPanel(gridLayout);
+
+
+
+
         emailLabel = new JLabel("N/A");
-        emailLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
-        centerPanel.add(emailLabel, gbc);
+        emailLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 48));
+        emailLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        centerPanel.add(emailLabel);
 
-        // Phone Number
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        centerPanel.add(new JLabel("Phone:"), gbc);
-        gbc.gridx = 1;
-        phoneLabel = new JLabel("N/A");
-        phoneLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
-        centerPanel.add(phoneLabel, gbc);
+
+        // Buttons
+        JButton orderButton = new JButton("Order");
+        JButton phoneButton = new JButton("Phone Numbers");
+        JButton addressButton = new JButton("Address");
+        JButton cardButton = new JButton("Cards");
+
+        centerPanel1.add(orderButton);
+        orderButton.addActionListener(e -> showOrderHistory());
+        centerPanel1.add(phoneButton);
+        centerPanel1.add(addressButton);
+        centerPanel1.add(cardButton);
+        centerPanel.add(centerPanel1);
+
+        orderButton.addActionListener(e -> {
+            // TODO: mainFrame.showOrders();
+        });
+        phoneButton.addActionListener(e -> {
+            // TODO: mainFrame.showPhoneNumbers();
+        });
+        addressButton.addActionListener(e -> {
+            // TODO: mainFrame.showAddresses();
+        });
+        cardButton.addActionListener(e -> {
+            // TODO: mainFrame.showCards();
+        });
+
 
         add(centerPanel, BorderLayout.CENTER);
     }
@@ -66,10 +82,11 @@ public class AccountDetailsPanel extends JPanel {
             if (customer.getPhoneNumbers() != null && !customer.getPhoneNumbers().isEmpty()) {
                 phone = customer.getPhoneNumbers().get(0);
             }
-            phoneLabel.setText(phone);
         } else {
             emailLabel.setText("N/A");
-            phoneLabel.setText("N/A");
         }
+    }
+    public void showOrderHistory() {
+        mainFrame.showOrderHistory();
     }
 }
