@@ -1,7 +1,7 @@
 package FOS_CORE;
 
-import java.sql.Date;
 import java.util.ArrayList;
+import java.sql.Date;
 
 public class ManagerService implements IManagerService {
 
@@ -15,56 +15,31 @@ public class ManagerService implements IManagerService {
 
     @Override
     public void updateRestaurantInfo(Restaurant restaurant) {
-        // TODO
+        if (restaurant == null) {
+            throw new IllegalArgumentException("Restaurant details must not be null");
+        }
+        if (restaurant.getRestaurantName() == null || restaurant.getRestaurantName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Restaurant name is required");
+        }
+        boolean ok = DB.saveRestaurantInfo(restaurant);
+        if (!ok) throw new RuntimeException("Failed to save restaurant info");
+        saveRestaurantChanges(restaurant);
     }
 
     @Override
     public void addMenuItem(Restaurant restaurant, MenuItem item) {
-        DB.addMenuItem(item, restaurant);
-    }
-
-    @Override
-    public void editMenuItem(Restaurant restaurant, MenuItem item) {
-         DB.updateMenuItem(item);// to be updated once changed from the data side
-    }
-
-    @Override
-    public void removeMenuItem(Restaurant restaurant, MenuItem item) {
-        DB.removeMenuItem(item);
-    }
-
-    @Override
-    public void updateRestaurantInfo(Manager manager, Restaurant details) {
-        if (manager == null || details == null) {
-            throw new IllegalArgumentException("Manager and restaurant details must not be null");
-        }
-        if (details.getRestaurantName() == null || details.getRestaurantName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Restaurant name is required");
-        }
-        details.setRestaurantID(manager.getUserID());
-        boolean ok = DB.saveRestaurantInfo(details);
-        if (!ok) throw new RuntimeException("Failed to save restaurant info");
-        saveRestaurantChanges(manager, details);
-    }
-
-    @Override
-    public void addMenuItem(Manager manager, MenuItem item) {
-        if (manager == null || item == null) {
-            throw new IllegalArgumentException("Manager and menu item must not be null");
+        if (restaurant == null || item == null) {
+            throw new IllegalArgumentException("Restaurant and menu item must not be null");
         }
         validateMenuItem(item);
-        Restaurant restaurant = getRestaurantDetails(manager);
-        if (restaurant == null) {
-            throw new IllegalStateException("Manager has no associated restaurant");
-        }
         boolean added = DB.addMenuItem(item, restaurant);
         if (!added) throw new RuntimeException("Failed to add menu item");
     }
 
     @Override
-    public void editMenuItem(Manager manager, MenuItem item) {
-        if (manager == null || item == null) {
-            throw new IllegalArgumentException("Manager and menu item must not be null");
+    public void editMenuItem(Restaurant restaurant, MenuItem item) {
+        if (restaurant == null || item == null) {
+            throw new IllegalArgumentException("Restaurant and menu item must not be null");
         }
         validateMenuItem(item);
         boolean ok = DB.updateMenuItem(item);
@@ -72,9 +47,9 @@ public class ManagerService implements IManagerService {
     }
 
     @Override
-    public void removeMenuItem(Manager manager, MenuItem item) {
-        if (manager == null || item == null) {
-            throw new IllegalArgumentException("Manager and menu item must not be null");
+    public void removeMenuItem(Restaurant restaurant, MenuItem item) {
+        if (restaurant == null || item == null) {
+            throw new IllegalArgumentException("Restaurant and menu item must not be null");
         }
         boolean ok = DB.removeMenuItem(item);
         if (!ok) throw new RuntimeException("Failed to remove menu item");
@@ -85,23 +60,28 @@ public class ManagerService implements IManagerService {
         if (manager == null) {
             throw new IllegalArgumentException("Manager must not be null");
         }
-        Restaurant restaurant = getRestaurantDetails(manager);
-        if (restaurant == null) {
+        ArrayList<Restaurant> restaurants = DB.fetchManagerRestaurants(manager);
+        if (restaurants == null || restaurants.isEmpty()) {
             return new ArrayList<>();
         }
-        ArrayList<Order> orders = DB.fetchRestaurantOrders(restaurant);
-        return orders != null ? orders : new ArrayList<>();
+        ArrayList<Order> allOrders = new ArrayList<>();
+        for (Restaurant restaurant : restaurants) {
+            ArrayList<Order> restaurantOrders = DB.fetchRestaurantOrders(restaurant);
+            if (restaurantOrders != null) {
+                for (Order order : restaurantOrders) {
+                    if (order.getStatus() == OrderStatus.PENDING) {
+                        allOrders.add(order);
+                    }
+                }
+            }
+        }
+        return allOrders;
     }
 
     @Override
     public void updateOrderStatus(Order order, String status) {
-
-    }
-
-    @Override
-    public void updateOrderStatus(Manager manager, Order order, String status) {
-        if (manager == null || order == null || status == null) {
-            throw new IllegalArgumentException("Manager, order and status must not be null");
+        if (order == null || status == null) {
+            throw new IllegalArgumentException("Order and status must not be null");
         }
         try {
             OrderStatus orderStatus = OrderStatus.valueOf(status.toUpperCase());
@@ -111,81 +91,10 @@ public class ManagerService implements IManagerService {
         }
     }
 
-    /**
-     
-     * Output Format (pipe-separated):
-     * restaurantName|managerID|date|revenue|totalOrders|deliveredOrders|avgRating
-
-     */
     @Override
     public String generateMonthlyReport(Manager manager, Restaurant restaurant, Date date) {
-        if (manager == null || restaurant == null || date == null) {
-            throw new IllegalArgumentException("Manager, restaurant, and date must not be null");
-        }
-
-        // Get all orders for the restaurant
-        ArrayList<Order> allOrders = DB.fetchRestaurantOrders(restaurant);
-        if (allOrders == null || allOrders.isEmpty()) {
-            return restaurant.getRestaurantName() + "|" + manager.getUserID() + "|" + date.toString() + "|0.00|0|0|0.0";
-        }
-
-        // Filter orders for the specified month (simple date comparison)
-        int targetYear = date.getYear() + 1900; // getYear() returns year - 1900
-        int targetMonth = date.getMonth() + 1;   // getMonth() returns 0-11
-
-        ArrayList<Order> monthlyOrders = new ArrayList<>();
-        for (Order order : allOrders) {
-            if (order.getCreationDate() == null) continue;
-            Date orderDate = order.getCreationDate();
-            int orderYear = orderDate.getYear() + 1900;
-            int orderMonth = orderDate.getMonth() + 1;
-            
-            if (orderYear == targetYear && orderMonth == targetMonth) {
-                monthlyOrders.add(order);
-            }
-        }
-
-        if (monthlyOrders.isEmpty()) {
-            return restaurant.getRestaurantName() + "|" + manager.getUserID() + "|" + date.toString() + "|0.00|0|0|0.0";
-        }
-
-        // Calculate revenue
-        double totalRevenue = 0.0;
-        int totalOrders = monthlyOrders.size();
-        int deliveredOrders = 0;
-        double totalRating = 0.0;
-        int ratedOrders = 0;
-
-        for (Order order : monthlyOrders) {
-            // Calculate order total
-            if (order.getItems() != null) {
-                for (CartItem item : order.getItems()) {
-                    if (item != null) {
-                        totalRevenue += item.calculateItemTotal();
-                    }
-                }
-            }
-
-            if (order.getStatus() == OrderStatus.DELIVERED) {
-                deliveredOrders++;
-            }
-
-            if (order.getRating() != null && order.getRating().getRatingValue() > 0) {
-                totalRating += order.getRating().getRatingValue();
-                ratedOrders++;
-            }
-        }
-
-        double averageRating = ratedOrders > 0 ? totalRating / ratedOrders : 0.0;
-
-        // Simple pipe-separated format: restaurant|managerID|date|revenue|totalOrders|deliveredOrders|avgRating
-        return restaurant.getRestaurantName() + "|" + 
-               manager.getUserID() + "|" + 
-               date.toString() + "|" + 
-               String.format("%.2f", totalRevenue) + "|" + 
-               totalOrders + "|" + 
-               deliveredOrders + "|" + 
-               String.format("%.1f", averageRating);
+        // TODO: Implementation
+        return null;
     }
 
     @Override
@@ -203,8 +112,8 @@ public class ManagerService implements IManagerService {
         // Ensure no overlapping discounts for this menu item
         for (Discount existing : item.getDiscounts()) {
             if (existing == null) continue;
-            java.sql.Date exStart = existing.getStartDate();
-            java.sql.Date exEnd = existing.getEndDate();
+            Date exStart = existing.getStartDate();
+            Date exEnd = existing.getEndDate();
             if (exStart == null || exEnd == null) continue;
             // overlap if newStart <= exEnd && newEnd >= exStart
             if (!endDate.before(exStart) && !startDate.after(exEnd)) {
@@ -228,22 +137,8 @@ public class ManagerService implements IManagerService {
         }
     }
 
-    private double calculateDiscount(MenuItem item) {
-        if (item == null || item.getDiscounts() == null) return 0.0;
-        java.sql.Date now = new java.sql.Date(new java.util.Date().getTime());
-        for (Discount d : item.getDiscounts()) {
-            if (d == null) continue;
-            java.sql.Date start = d.getStartDate();
-            java.sql.Date end = d.getEndDate();
-            if (start != null && end != null && !now.before(start) && !now.after(end)) {
-                return d.getDiscountPercentage();
-            }
-        }
-        return 0.0;
-    }
-
-    private void saveRestaurantChanges(Manager manager, Restaurant restaurant) {
-        if (manager == null || restaurant == null) return;
+    private void saveRestaurantChanges(Restaurant restaurant) {
+        if (restaurant == null) return;
         DB.saveRestaurantInfo(restaurant);
     }
 }
