@@ -25,7 +25,6 @@ public class RestaurantListPanel extends JPanel {
         setLayout(new BorderLayout());
 
         JPanel topPanel = new JPanel(new FlowLayout());
-        topPanel.add(new JLabel("City:"));
         cityDropdown = new JComboBox<>(getCustomerAddresses());
         // safe initialization: only set selectedAddress if an item exists
         if (cityDropdown.getItemCount() > 0 && cityDropdown.getItemAt(0) != null) {
@@ -34,7 +33,6 @@ public class RestaurantListPanel extends JPanel {
             selectedAddress = null;
         }
         topPanel.add(cityDropdown);
-        topPanel.add(new JLabel("Keyword:"));
         searchField = new JTextField(15);
         topPanel.add(searchField);
         JButton searchKeywordButton = new JButton("Search");
@@ -124,14 +122,16 @@ public class RestaurantListPanel extends JPanel {
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
 
         JLabel nameLabel = new JLabel(restaurant.getRestaurantName());
-        nameLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
+        nameLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 28));
         JLabel cuisineLabel = new JLabel("Cuisine: " + restaurant.getCuisineType());
         JLabel cityLabel = new JLabel("City: " + restaurant.getCity());
+        JLabel ratingLabel = new JLabel("Rating: " + restaurant.calculateRestaurantRating(restaurant));
 
-        JPanel infoPanel = new JPanel(new GridLayout(3, 1));
+        JPanel infoPanel = new JPanel(new GridLayout(4, -1));
         infoPanel.add(nameLabel);
         infoPanel.add(cuisineLabel);
         infoPanel.add(cityLabel);
+        infoPanel.add(ratingLabel);
 
         JButton viewMenuButton = new JButton("View Menu");
         viewMenuButton.addActionListener(e -> mainPanel.showMenu(restaurant));

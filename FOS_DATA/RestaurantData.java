@@ -81,4 +81,23 @@ public class RestaurantData implements IRestaurantData{
         }
         return null;
     }
+
+    @Override
+    public double calculateRestaurantRating(Restaurant restaurant) {
+        int restaurantID = restaurant.getRestaurantID();
+        final String sql = " SELECT AVG(rt.rating_value) as avg_rating " +
+                "FROM Rating rt JOIN `Order` o ON rt.order_id = o.order_id WHERE o.restaurant_id = ? ";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, restaurantID);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getDouble("avg_rating");
+            }
+
+        }catch (SQLException e) {
+            System.out.println("Database failed to fetch restaurant ratings: " + e.getMessage());
+        }
+        return 0;
+    }
 }

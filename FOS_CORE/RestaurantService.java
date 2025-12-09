@@ -63,6 +63,11 @@ public class RestaurantService implements IRestaurantService {
         return item.getPrice();
     }
 
+    @Override
+    public double calculateRestaurantRating(Restaurant restaurant) {
+        return DB.calculateRestaurantRating(restaurant);
+    }
+
     private void loadRestaurantData(Restaurant restaurant) {
         // TODO: Implementation
     }

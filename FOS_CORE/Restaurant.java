@@ -12,9 +12,10 @@ public class Restaurant {
     private String city;
     ArrayList<String> Keywords;
     private ArrayList<MenuItem> menu;
+    RestaurantService restaurantService = new RestaurantService();
 
     public Restaurant(int restaurantID, String restaurantName, String cuisineType, String city){
-        RestaurantService restaurantService = new RestaurantService();
+
         this.restaurantID = restaurantID;
         this.restaurantName = restaurantName;
         this.cuisineType = cuisineType;
@@ -64,6 +65,10 @@ public class Restaurant {
     }
 
     public ArrayList<String> getKeywords() {return Keywords;}
+
+    public double calculateRestaurantRating(Restaurant restaurant) {
+        return restaurantService.calculateRestaurantRating(restaurant);
+    }
 
     public void setKeywords(ArrayList<String> keywords) {Keywords = keywords;}
 }

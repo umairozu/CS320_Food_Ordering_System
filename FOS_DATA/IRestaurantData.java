@@ -8,4 +8,5 @@ public interface IRestaurantData {
     public ArrayList<Discount> fetchMenuItemDiscounts(MenuItem menuItem);
     public ArrayList<Restaurant> fetchRestaurantsByCity(String city);
     public ArrayList<MenuItem> fetchRestaurantMenu(Restaurant restaurant);
+    public double calculateRestaurantRating(Restaurant restaurant);
 }
