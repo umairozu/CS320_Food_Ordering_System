@@ -1,3 +1,4 @@
+// java
 package FOS_UI.MockUI;
 
 import FOS_CORE.*;
@@ -26,7 +27,12 @@ public class RestaurantListPanel extends JPanel {
         JPanel topPanel = new JPanel(new FlowLayout());
         topPanel.add(new JLabel("City:"));
         cityDropdown = new JComboBox<>(getCustomerAddresses());
-        selectedAddress = cityDropdown.getItemAt(0);
+        // safe initialization: only set selectedAddress if an item exists
+        if (cityDropdown.getItemCount() > 0 && cityDropdown.getItemAt(0) != null) {
+            selectedAddress = cityDropdown.getItemAt(0);
+        } else {
+            selectedAddress = null;
+        }
         topPanel.add(cityDropdown);
         topPanel.add(new JLabel("Keyword:"));
         searchField = new JTextField(15);
@@ -39,6 +45,7 @@ public class RestaurantListPanel extends JPanel {
         restaurantPanel.setLayout(new BoxLayout(restaurantPanel, BoxLayout.Y_AXIS));
         JScrollPane scrollPane = new JScrollPane(restaurantPanel);
         add(scrollPane, BorderLayout.CENTER);
+
         cityDropdown.addActionListener(e -> searchByCity());
         searchKeywordButton.addActionListener(e -> searchByKeyword());
     }
@@ -54,10 +61,11 @@ public class RestaurantListPanel extends JPanel {
     }
 
     private void searchByCity() {
-        selectedAddress = cityDropdown.getSelectedItem().toString();
+        Object sel = cityDropdown.getSelectedItem();
+        selectedAddress = (sel != null) ? sel.toString() : null;
         String city = extractCityFromAddress(selectedAddress);
         if (city.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter a city name.", "Validation Error", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please select a valid city.", "Validation Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
         loadRestaurantsByCity(city);
@@ -77,7 +85,7 @@ public class RestaurantListPanel extends JPanel {
         RestaurantService service = mainFrame.getRestaurantService();
         this.restaurants = service.getRestaurantsByCity(city);
 
-        if (restaurants.isEmpty()) {
+        if (restaurants == null || restaurants.isEmpty()) {
             restaurantPanel.add(new JLabel("No restaurants found in " + city));
         } else {
             for (Restaurant restaurant : restaurants) {
@@ -92,9 +100,9 @@ public class RestaurantListPanel extends JPanel {
     private void loadRestaurantsByKeyword(String keyword) {
         restaurantPanel.removeAll();
         RestaurantService service = mainFrame.getRestaurantService();
-        this.restaurants = service.searchRestaurantsByKeyword(keyword,restaurants);
+        this.restaurants = service.searchRestaurantsByKeyword(keyword, restaurants);
 
-        if (restaurants.isEmpty()) {
+        if (restaurants == null || restaurants.isEmpty()) {
             restaurantPanel.add(new JLabel("No restaurants found matching: " + keyword));
         } else {
             for (Restaurant restaurant : restaurants) {
@@ -132,23 +140,44 @@ public class RestaurantListPanel extends JPanel {
         card.add(viewMenuButton, BorderLayout.EAST);
         return card;
     }
+
+    // Null-safe: returns empty string if address is null or doesn't contain a city part
     private String extractCityFromAddress(String address) {
-        String[] parts = address.split(",");
+        if (address == null) return "";
+        String trimmed = address.trim();
+        if (trimmed.isEmpty()) return "";
+        String[] parts = trimmed.split(",\\s*");
         if (parts.length >= 2) {
             return parts[1].trim();
         }
+        // If address has no comma, attempt to use the whole value as city if plausible
         return "";
     }
+
+    // Null-safe: always returns at least one element for the combo to display
     private String[] getCustomerAddresses() {
-        List<Address> addresses = mainFrame.getCurrentCustomer().getAddresses();
-        String[] addressStrings = new String[addresses.size()];
-        for (int i = 0; i < addresses.size(); i++) {
-            addressStrings[i] = addresses.get(i).toString();
+        if (mainFrame == null || mainFrame.getCurrentCustomer() == null) {
+            return new String[]{"No addresses available"};
         }
-        return addressStrings;
+        List<Address> addresses = mainFrame.getCurrentCustomer().getAddresses();
+        if (addresses == null || addresses.isEmpty()) {
+            return new String[]{"No addresses available"};
+        }
+        List<String> addressStrings = new ArrayList<>();
+        for (Address a : addresses) {
+            if (a == null) continue;
+            String s = (a.toString() != null) ? a.toString().trim() : "";
+            if (!s.isEmpty()) {
+                addressStrings.add(s);
+            }
+        }
+        if (addressStrings.isEmpty()) {
+            return new String[]{"No addresses available"};
+        }
+        return addressStrings.toArray(new String[0]);
     }
+
     public String getSelectedAddress() {
         return selectedAddress;
     }
 }
-

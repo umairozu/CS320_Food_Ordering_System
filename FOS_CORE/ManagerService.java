@@ -15,6 +15,14 @@ public class ManagerService implements IManagerService {
     }
 
     @Override
+    public ArrayList<Restaurant> getManagerRestaurants(Manager manager) {
+        if (manager == null) {
+            throw new IllegalArgumentException("Manager must not be null");
+        }
+        return DB.fetchManagerRestaurants(manager);
+    }
+
+    @Override
     public void updateRestaurantInfo(Restaurant restaurant) {
         if (restaurant == null) {
             throw new IllegalArgumentException("Restaurant details must not be null");

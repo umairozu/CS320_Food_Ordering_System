@@ -1,12 +1,15 @@
 package FOS_UI.MockUI;
 
 import FOS_CORE.*;
+import FOS_UI.ManagerDashboardWindow;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
 public class MainFrame extends JFrame {
     private Customer currentCustomer;
+    private Manager currentManager;
     private RestaurantService restaurantService;
     private CartService cartService;
     private OrderService orderService;
@@ -20,6 +23,7 @@ public class MainFrame extends JFrame {
     private OrderHistoryPanel orderHistoryPanel;
     private AccountDetailsPanel accountDetailsPanel;
     private PhoneNumbersPanel phoneNumbersPanel;
+
 
     public MainFrame() {
         super("Food Ordering System");
@@ -80,6 +84,7 @@ public class MainFrame extends JFrame {
         setJMenuBar(menuBar);
     }
 
+    // java
     public void showLogin() {
         LoginDialog loginDialog = new LoginDialog(this);
         loginDialog.setVisible(true);
@@ -89,9 +94,15 @@ public class MainFrame extends JFrame {
             initComponents();
             showRestaurants();
             setVisible(true);
+// java
+// Replace the "else if (user instanceof Manager) { ... }" branch in showLogin()
         } else if (user instanceof Manager) {
-            JOptionPane.showMessageDialog(this, "Manager interface not yet implemented.", "Info", JOptionPane.INFORMATION_MESSAGE);
-            System.exit(0);
+            Manager manager = (Manager) user;
+            currentManager = manager;
+
+            ManagerDashboardWindow dashboard = new ManagerDashboardWindow(manager);
+            dashboard.setVisible(true);
+            this.dispose();
         } else {
             System.exit(0);
         }
@@ -180,5 +191,3 @@ public class MainFrame extends JFrame {
     }
     public AccountService getAccountService() {return accountService;}
 }
-
-

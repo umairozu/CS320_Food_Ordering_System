@@ -6,6 +6,7 @@ import java.sql.Date;
 
 public interface IManagerService {
     Restaurant getRestaurantDetails(Manager manager);
+    ArrayList<Restaurant> getManagerRestaurants(Manager manager);
     void updateRestaurantInfo(Restaurant restaurant);
     void addMenuItem(Restaurant restaurant, MenuItem item) ;
     void editMenuItem(Restaurant restaurant, MenuItem item);
