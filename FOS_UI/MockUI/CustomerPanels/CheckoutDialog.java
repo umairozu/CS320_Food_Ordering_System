@@ -1,20 +1,20 @@
-package FOS_UI.MockUI;
+package FOS_UI.MockUI.CustomerPanels;
 
 import FOS_CORE.*;
+import FOS_UI.MockUI.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.List;
 
 public class CheckoutDialog extends JDialog {
 
     private final Address deliveryAddress;
     private final Restaurant restaurant;
     private final String selectedPhoneNumber;
-    private final MainFrame mainFrame;
+    private final CustomerMainPanel mainPanel;
 
     private JComboBox<Card> cardComboBox;
     private JLabel totalLabel;
@@ -22,18 +22,18 @@ public class CheckoutDialog extends JDialog {
     private JButton cancelButton;
     private JButton addCardButton;
 
-    public CheckoutDialog(MainFrame owner,
+    public CheckoutDialog(CustomerMainPanel mainPanel,
                           Address deliveryAddress,
                           Restaurant restaurant,
                           String selectedPhoneNumber) {
-        super(owner, "Checkout", true);
-        this.mainFrame = owner;
+        super(mainPanel.getMainFrame(), "Checkout", true);
+        this.mainPanel = mainPanel;
         this.deliveryAddress = deliveryAddress;
         this.restaurant = restaurant;
         this.selectedPhoneNumber = selectedPhoneNumber;
         initComponents();
         pack();
-        setLocationRelativeTo(owner);
+        setLocationRelativeTo(mainPanel.getMainFrame());
     }
 
     private void initComponents() {
@@ -46,7 +46,7 @@ public class CheckoutDialog extends JDialog {
         centerPanel.add(totalLabel);
 
         cardComboBox = new JComboBox<>();
-        for (Card card : mainFrame.getCurrentCustomer().getCards()) {
+        for (Card card : mainPanel.getCurrentCustomer().getCards()) {
             cardComboBox.addItem(card);
         }
         cardComboBox.setRenderer(new DefaultListCellRenderer() {
@@ -91,7 +91,7 @@ public class CheckoutDialog extends JDialog {
 
     private double calculateCartTotal() {
         double total = 0.0;
-        for (CartItem item : mainFrame.getCurrentCustomer().getCart()) {
+        for (CartItem item : mainPanel.getCurrentCustomer().getCart()) {
             total += item.getPrice() * item.getQuantity();
         }
         return total;
@@ -114,16 +114,16 @@ public class CheckoutDialog extends JDialog {
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
-        Order order = new Order(deliveryAddress.toString(), (ArrayList<CartItem>) mainFrame.getCurrentCustomer().getCart().clone(), restaurant.getRestaurantName(), selectedPhoneNumber, selectedCard.getCardNumber());
+        Order order = new Order(deliveryAddress.toString(), (ArrayList<CartItem>) mainPanel.getCurrentCustomer().getCart().clone(), restaurant.getRestaurantName(), selectedPhoneNumber, selectedCard.getCardNumber());
         try {
-            mainFrame.getOrderService().placeOrder(
-                     mainFrame.getCurrentCustomer(),
+            mainPanel.getOrderService().placeOrder(
+                    mainPanel.getCurrentCustomer(),
                     deliveryAddress,order,
                     restaurant
             );
-            mainFrame.getCurrentCustomer().getCart().clear();
+            mainPanel.getCurrentCustomer().getCart().clear();
             dispose();
-            mainFrame.showOrderHistory();
+            mainPanel.showOrderHistory();
             JOptionPane.showMessageDialog(this, "Order placed successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Failed to place order: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

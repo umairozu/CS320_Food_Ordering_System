@@ -1,13 +1,14 @@
-package FOS_UI.MockUI;
+package FOS_UI.MockUI.CustomerPanels;
 
 import FOS_CORE.*;
 import FOS_CORE.MenuItem;
+import FOS_UI.MockUI.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class CartPanel extends JPanel {
-    private MainFrame mainFrame;
+    private CustomerMainPanel mainPanel;
     private JPanel cartItemsPanel;
     private JLabel totalLabel;
     private JLabel restaurantLabel = new JLabel("Your Cart is empty");
@@ -16,8 +17,8 @@ public class CartPanel extends JPanel {
     private String selectedPhoneNumber;
 
 
-    public CartPanel(MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
+    public CartPanel(CustomerMainPanel mainPanel) {
+        this.mainPanel = mainPanel;
         initComponents();
     }
 
@@ -26,13 +27,13 @@ public class CartPanel extends JPanel {
 
         JPanel topPanel = new JPanel(new BorderLayout());
         JButton backButton = new JButton("Back to Restaurants");
-        backButton.addActionListener(e -> mainFrame.showRestaurants());
+        backButton.addActionListener(e -> mainPanel.showRestaurants());
         topPanel.add(backButton, BorderLayout.WEST);
         restaurantLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
         restaurantLabel.setHorizontalAlignment(SwingConstants.CENTER);
         topPanel.add(restaurantLabel, BorderLayout.CENTER);
         JButton emptyCart = new JButton("Empty Cart");
-        emptyCart.addActionListener(e -> {mainFrame.getCurrentCustomer().getCart().clear();refresh();});
+        emptyCart.addActionListener(e -> {mainPanel.getCurrentCustomer().getCart().clear();refresh();});
         topPanel.add(emptyCart, BorderLayout.EAST);
         add(topPanel, BorderLayout.NORTH);
 
@@ -55,7 +56,7 @@ public class CartPanel extends JPanel {
         selectedPhoneNumber = phoneNumberDropdown.getItemAt(0);
         phoneNumberDropdown.addActionListener(e -> selectedPhoneNumber = (String) phoneNumberDropdown.getSelectedItem());
         bottomPanel2.add(phoneNumberDropdown, BorderLayout.SOUTH);
-        addressLabel = new JLabel("Delivery Address: " + mainFrame.getRestaurantListPanel().getSelectedAddress());
+        addressLabel = new JLabel("Delivery Address: " + mainPanel.getRestaurantListPanel().getSelectedAddress());
         bottomPanel2.add(addressLabel, BorderLayout.NORTH);
 
         JPanel bottomPanel = new JPanel(new BorderLayout());
@@ -66,8 +67,8 @@ public class CartPanel extends JPanel {
 
     public void refresh() {
         cartItemsPanel.removeAll();
-        Customer customer = mainFrame.getCurrentCustomer();
-        addressLabel.setText("Delivery Address: " + mainFrame.getRestaurantListPanel().getSelectedAddress());
+        Customer customer = mainPanel.getCurrentCustomer();
+        addressLabel.setText("Delivery Address: " + mainPanel.getRestaurantListPanel().getSelectedAddress());
         if (customer == null || customer.getCart() == null || customer.getCart().isEmpty()) {
             restaurantLabel.setText("Your Cart is empty");
             totalLabel.setText("Total: $0.00");
@@ -102,8 +103,8 @@ public class CartPanel extends JPanel {
         quantitySpinner.addChangeListener(
                 e -> {
                     int newQuantity = (int) quantitySpinner.getValue();
-                    CartService cartService = mainFrame.getCartService();
-                    cartService.updateCartItemQuantity(mainFrame.getCurrentCustomer(), item, newQuantity);
+                    CartService cartService = mainPanel.getCartService();
+                    cartService.updateCartItemQuantity(mainPanel.getCurrentCustomer(), item, newQuantity);
                     refresh();
                 }
         );
@@ -119,8 +120,8 @@ public class CartPanel extends JPanel {
 
         JButton removeButton = new JButton("Remove");
         removeButton.addActionListener(e -> {
-            CartService cartService = mainFrame.getCartService();
-            cartService.removeFromCart(mainFrame.getCurrentCustomer(), item);
+            CartService cartService = mainPanel.getCartService();
+            cartService.removeFromCart(mainPanel.getCurrentCustomer(), item);
             refresh();
         });
 
@@ -130,7 +131,7 @@ public class CartPanel extends JPanel {
     }
 
     private void onCheckout() {
-        Customer customer = mainFrame.getCurrentCustomer();
+        Customer customer = mainPanel.getCurrentCustomer();
         if (customer == null || customer.getCart() == null || customer.getCart().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Your cart is empty.", "Error", JOptionPane.WARNING_MESSAGE);
             return;
@@ -142,7 +143,7 @@ public class CartPanel extends JPanel {
         }
         Address selectedAddress = getSelectedAddress();
         CheckoutDialog checkoutDialog = new CheckoutDialog(
-                mainFrame,
+                mainPanel,
                 selectedAddress,
                 restaurant,
                 selectedPhoneNumber
@@ -154,11 +155,11 @@ public class CartPanel extends JPanel {
         restaurantLabel.setText("~ " + restaurant.getRestaurantName() + " ~");
     }
     private String[] getCustomerPhoneNumbers() {
-        return mainFrame.getCurrentCustomer().getPhoneNumbers().toArray(new String[0]);
+        return mainPanel.getCurrentCustomer().getPhoneNumbers().toArray(new String[0]);
     }
     private Address getSelectedAddress() {
-        String selectedAddressStr = mainFrame.getRestaurantListPanel().getSelectedAddress();
-        for (Address address : mainFrame.getCurrentCustomer().getAddresses()) {
+        String selectedAddressStr = mainPanel.getRestaurantListPanel().getSelectedAddress();
+        for (Address address : mainPanel.getCurrentCustomer().getAddresses()) {
             if (address.toString().equals(selectedAddressStr)) {
                 return address;
             }

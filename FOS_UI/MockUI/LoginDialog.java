@@ -52,6 +52,7 @@ public class LoginDialog extends JDialog {
         buttonPanel.add(registerButton);
         add(buttonPanel, BorderLayout.SOUTH);
 
+        getRootPane().setDefaultButton(loginButton);
         loginButton.addActionListener(e -> onLogin());
         registerButton.addActionListener(e -> onRegister());
     }

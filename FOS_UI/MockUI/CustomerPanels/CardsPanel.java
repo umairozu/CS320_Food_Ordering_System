@@ -1,18 +1,18 @@
-package FOS_UI.MockUI;
+package FOS_UI.MockUI.CustomerPanels;
 
 import FOS_CORE.*;
+import FOS_UI.MockUI.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 
 public class CardsPanel extends JPanel {
-    private MainFrame mainFrame;
+    private CustomerMainPanel mainPanel;
     private AccountDetailsPanel accountDetailsPanel;
     private JPanel cardsPanel;
 
-    public CardsPanel(MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
+    public CardsPanel(CustomerMainPanel mainPanel) {
+        this.mainPanel = mainPanel;
         initComponents();
     }
 
@@ -21,7 +21,7 @@ public class CardsPanel extends JPanel {
 
         JPanel topPanel = new JPanel(new BorderLayout());
         JButton backButton = new JButton("Back to Profile");
-        backButton.addActionListener(e -> mainFrame.showAccountDetails());
+        backButton.addActionListener(e -> mainPanel.showAccountDetails());
         topPanel.add(backButton, BorderLayout.WEST);
         JLabel titleLabel = new JLabel("Cards");
         titleLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
@@ -37,7 +37,7 @@ public class CardsPanel extends JPanel {
 
     public void refresh(){
         cardsPanel.removeAll();
-        Customer customer = mainFrame.getCurrentCustomer();
+        Customer customer = mainPanel.getCurrentCustomer();
         if(customer == null){
             cardsPanel.add(new JLabel("Please log in to view cards."));
         } else {
@@ -78,7 +78,7 @@ public class CardsPanel extends JPanel {
     }
 
     private void removeButtonAction(Card card){
-        mainFrame.getAccountService().removeCard(mainFrame.getCurrentCustomer(), card);
+        mainPanel.getMainFrame().getAccountService().removeCard(mainPanel.getCurrentCustomer(), card);
         refresh();
     }
 }

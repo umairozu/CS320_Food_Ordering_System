@@ -1,22 +1,20 @@
 // java
-package FOS_UI.MockUI;
+package FOS_UI.MockUI.ManagerPanels;
 
 import FOS_CORE.*;
-import FOS_UI.MockUI.MainFrame;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-public class ManagerRestaurantListPanel extends JPanel {
-    private MainFrame mainFrame;
+public class RestaurantListPanel extends JPanel {
+    private ManagerMainPanel mainPanel;
     private JPanel restaurantPanel;
     private ArrayList<Restaurant> restaurants;
 
-    public ManagerRestaurantListPanel(MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
+    public RestaurantListPanel(ManagerMainPanel mainPanel) {
+        this.mainPanel = mainPanel;
         initComponents();
     }
     private void initComponents() {
@@ -24,6 +22,7 @@ public class ManagerRestaurantListPanel extends JPanel {
         JPanel topPanel = new JPanel(new FlowLayout());
         JLabel header = new JLabel("Manager Dashboard");
         header.setFont(header.getFont().deriveFont(Font.BOLD, 22f));
+        topPanel.add(header);
         add (topPanel, BorderLayout.NORTH);
         restaurantPanel = new JPanel();
         restaurantPanel.setLayout(new BoxLayout(restaurantPanel, BoxLayout.Y_AXIS));
@@ -32,7 +31,7 @@ public class ManagerRestaurantListPanel extends JPanel {
 
     }
     public void refresh() {
-        loadRestaurants(mainFrame.getCurrentManager());
+        loadRestaurants(mainPanel.getCurrentManager());
         restaurantPanel.revalidate();
         restaurantPanel.repaint();
     }
@@ -43,7 +42,7 @@ public class ManagerRestaurantListPanel extends JPanel {
             restaurants = new ArrayList<>();
             return;
         }
-        ManagerService service = mainFrame.getManagerService();
+        ManagerService service = mainPanel.getManagerService();
         this.restaurants = service.getManagerRestaurants(manager);
 
         if (restaurants == null || restaurants.isEmpty()) {
@@ -66,40 +65,22 @@ public class ManagerRestaurantListPanel extends JPanel {
         ));
         card.setPreferredSize(new Dimension(600, 150));
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
-        card.setBackground(Color.WHITE);
+
+        JLabel nameLabel = new JLabel(restaurant.getRestaurantName());
+        nameLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
+        JLabel cuisineLabel = new JLabel("Cuisine: " + restaurant.getCuisineType());
+        JLabel cityLabel = new JLabel("City: " + restaurant.getCity());
 
         JPanel infoPanel = new JPanel(new GridLayout(3, 1));
-        infoPanel.setOpaque(false);
+        infoPanel.add(nameLabel);
+        infoPanel.add(cuisineLabel);
+        infoPanel.add(cityLabel);
 
-        JLabel name = new JLabel(restaurant.getRestaurantName());
-        name.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
-
-        JLabel cuisine = new JLabel("Cuisine: " + restaurant.getCuisineType());
-        cuisine.setForeground(new Color(80, 80, 80));
-
-        JLabel city = new JLabel("City: " + restaurant.getCity());
-        city.setForeground(new Color(80, 80, 80));
-
-        infoPanel.add(name);
-        infoPanel.add(cuisine);
-        infoPanel.add(city);
+        JButton viewMenuButton = new JButton("Manage Restaurant");
+        //viewMenuButton.addActionListener();
 
         card.add(infoPanel, BorderLayout.CENTER);
-
-
-        JLabel arrow = new JLabel("View →");
-        arrow.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
-
-        JPanel arrowPanel = new JPanel(new GridBagLayout());
-        arrowPanel.setOpaque(false);
-        arrowPanel.add(arrow);
-
-        card.add(arrowPanel, BorderLayout.EAST);
-        card.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-
-            }
-        });
+        card.add(viewMenuButton, BorderLayout.EAST);
         return card;
 
     }

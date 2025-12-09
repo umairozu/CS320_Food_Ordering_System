@@ -1,7 +1,8 @@
-package FOS_UI.MockUI;
+package FOS_UI.MockUI.CustomerPanels;
 
 import FOS_CORE.*;
 import FOS_CORE.MenuItem;
+import FOS_UI.MockUI.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,14 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RestaurantMenuPanel extends JPanel {
-    private MainFrame mainFrame;
+    private CustomerMainPanel mainPanel;
     private Restaurant currentRestaurant;
     private JPanel menuPanel;
     private JLabel restaurantNameLabel;
     RestaurantService service = new RestaurantService();
 
-    public RestaurantMenuPanel(MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
+    public RestaurantMenuPanel(CustomerMainPanel mainPanel) {
+        this.mainPanel = mainPanel;
         initComponents();
     }
 
@@ -25,7 +26,7 @@ public class RestaurantMenuPanel extends JPanel {
 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton backButton = new JButton("Back to Restaurants");
-        backButton.addActionListener(e -> mainFrame.showRestaurants());
+        backButton.addActionListener(e -> mainPanel.showRestaurants());
         topPanel.add(backButton);
         restaurantNameLabel = new JLabel();
         restaurantNameLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
@@ -116,7 +117,7 @@ public class RestaurantMenuPanel extends JPanel {
     }
 
     private void addToCart(MenuItem item, int quantity, double price) {
-        Customer customer = mainFrame.getCurrentCustomer();
+        Customer customer = mainPanel.getCurrentCustomer();
         if (customer == null) {
             JOptionPane.showMessageDialog(this, "Please log in first.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
@@ -126,9 +127,9 @@ public class RestaurantMenuPanel extends JPanel {
             return;
         }
         try {
-            CartService cartService = mainFrame.getCartService();
+            CartService cartService = mainPanel.getCartService();
             cartService.addToCart(customer, item, quantity, price);
-            mainFrame.getCartPanel().setRestaurant(currentRestaurant);
+            mainPanel.getCartPanel().setRestaurant(currentRestaurant);
             JOptionPane.showMessageDialog(this,
                     quantity + "x " + item.getItemName() + " added to cart!",
                     "Success",
@@ -142,7 +143,7 @@ public class RestaurantMenuPanel extends JPanel {
     }
 
     private boolean isSameRestaurant() {
-        Customer customer = mainFrame.getCurrentCustomer();
+        Customer customer = mainPanel.getCurrentCustomer();
         ArrayList<CartItem> cartItems = customer.getCart();
         ArrayList<MenuItem> cartMenuItems = new ArrayList<>();
         List<MenuItem> menuItems = currentRestaurant.getMenu();

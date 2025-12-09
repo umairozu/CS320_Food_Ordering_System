@@ -1,19 +1,19 @@
-package FOS_UI.MockUI;
+package FOS_UI.MockUI.CustomerPanels;
 
 import FOS_CORE.*;
+import FOS_UI.MockUI.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 public class OrderHistoryPanel extends JPanel {
-    private MainFrame mainFrame;
+    private CustomerMainPanel mainPanel;
     private JPanel ordersPanel;
 
-    public OrderHistoryPanel(MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
+    public OrderHistoryPanel(CustomerMainPanel mainPanel) {
+        this.mainPanel = mainPanel;
         initComponents();
     }
 
@@ -22,7 +22,7 @@ public class OrderHistoryPanel extends JPanel {
 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton backButton = new JButton("Back to Restaurants");
-        backButton.addActionListener(e -> mainFrame.showRestaurants());
+        backButton.addActionListener(e -> mainPanel.showRestaurants());
         topPanel.add(backButton);
         add(topPanel, BorderLayout.NORTH);
 
@@ -34,7 +34,7 @@ public class OrderHistoryPanel extends JPanel {
 
     public void refresh() {
         ordersPanel.removeAll();
-        Customer customer = mainFrame.getCurrentCustomer();
+        Customer customer = mainPanel.getCurrentCustomer();
         if (customer == null) {
             ordersPanel.add(new JLabel("Please log in to view orders."));
         } else {
@@ -114,7 +114,7 @@ public class OrderHistoryPanel extends JPanel {
                     return;
                 }
                 String comment = JOptionPane.showInputDialog(this, "Add a comment (optional):", "Comment", JOptionPane.QUESTION_MESSAGE);
-                OrderService orderService = mainFrame.getOrderService();
+                OrderService orderService = mainPanel.getOrderService();
                 orderService.rateOrder(order, rating, comment != null ? comment : "");
                 JOptionPane.showMessageDialog(this, "Thank you for your rating!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 refresh();

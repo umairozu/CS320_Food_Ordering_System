@@ -1,17 +1,19 @@
-package FOS_UI.MockUI;
+package FOS_UI.MockUI.CustomerPanels;
 
 import FOS_CORE.*;
+import FOS_UI.MockUI.MainFrame;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class AccountDetailsPanel extends JPanel {
-    private MainFrame mainFrame;
+    private CustomerMainPanel mainPanel;
     private JLabel emailLabel;
     private JPanel orderHistoryPanel;
     private JPanel phoneNumbersPanel;
 
-    public AccountDetailsPanel(MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
+    public AccountDetailsPanel(CustomerMainPanel mainPanel) {
+        this.mainPanel = mainPanel;
         initComponents();
     }
 
@@ -20,7 +22,7 @@ public class AccountDetailsPanel extends JPanel {
 
         JPanel topPanel = new JPanel(new BorderLayout());
         JButton backButton = new JButton("Back to Restaurants");
-        backButton.addActionListener(e -> mainFrame.showRestaurants());
+        backButton.addActionListener(e -> mainPanel.showRestaurants());
         topPanel.add(backButton, BorderLayout.WEST);
         // Title
         JLabel titleLabel = new JLabel("Account Information");
@@ -66,7 +68,7 @@ public class AccountDetailsPanel extends JPanel {
     }
 
     public void refresh() {
-        Customer customer = mainFrame.getCurrentCustomer();
+        Customer customer = mainPanel.getCurrentCustomer();
         if (customer != null) {
             emailLabel.setText(customer.getEmail() != null ? customer.getEmail() : "N/A");
             String phone = "N/A";
@@ -78,15 +80,15 @@ public class AccountDetailsPanel extends JPanel {
         }
     }
     public void showOrderHistory() {
-        mainFrame.showOrderHistory();
+        mainPanel.showOrderHistory();
     }
     public void showAddresses() {
-        mainFrame.showAddresses();
+        mainPanel.showAddresses();
     }
     public void showPhoneNumbers() {
-        mainFrame.showPhoneNumbers();
+        mainPanel.showPhoneNumbers();
     }
     public void showCards() {
-        mainFrame.showCards();
+        mainPanel.showCards();
     }
 }

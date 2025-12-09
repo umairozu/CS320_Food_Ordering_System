@@ -1,22 +1,23 @@
 // java
-package FOS_UI.MockUI;
+package FOS_UI.MockUI.CustomerPanels;
 
 import FOS_CORE.*;
+import FOS_UI.MockUI.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class CustomerRestaurantListPanel extends JPanel {
-    private MainFrame mainFrame;
+public class RestaurantListPanel extends JPanel {
+    private CustomerMainPanel mainPanel;
     private JPanel restaurantPanel;
     private JComboBox<String> cityDropdown;
     private JTextField searchField;
     private ArrayList<Restaurant> restaurants;
     private String selectedAddress;
 
-    public CustomerRestaurantListPanel(MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
+    public RestaurantListPanel(CustomerMainPanel customerMainPanel) {
+        this.mainPanel = customerMainPanel;
         initComponents();
     }
 
@@ -81,7 +82,7 @@ public class CustomerRestaurantListPanel extends JPanel {
 
     private void loadRestaurantsByCity(String city) {
         restaurantPanel.removeAll();
-        RestaurantService service = mainFrame.getRestaurantService();
+        RestaurantService service = mainPanel.getRestaurantService();
         this.restaurants = service.getRestaurantsByCity(city);
 
         if (restaurants == null || restaurants.isEmpty()) {
@@ -98,7 +99,7 @@ public class CustomerRestaurantListPanel extends JPanel {
 
     private void loadRestaurantsByKeyword(String keyword) {
         restaurantPanel.removeAll();
-        RestaurantService service = mainFrame.getRestaurantService();
+        RestaurantService service = mainPanel.getRestaurantService();
         this.restaurants = service.searchRestaurantsByKeyword(keyword, restaurants);
 
         if (restaurants == null || restaurants.isEmpty()) {
@@ -133,7 +134,7 @@ public class CustomerRestaurantListPanel extends JPanel {
         infoPanel.add(cityLabel);
 
         JButton viewMenuButton = new JButton("View Menu");
-        viewMenuButton.addActionListener(e -> mainFrame.showMenu(restaurant));
+        viewMenuButton.addActionListener(e -> mainPanel.showMenu(restaurant));
 
         card.add(infoPanel, BorderLayout.CENTER);
         card.add(viewMenuButton, BorderLayout.EAST);
@@ -155,10 +156,10 @@ public class CustomerRestaurantListPanel extends JPanel {
 
     // Null-safe: always returns at least one element for the combo to display
     private String[] getCustomerAddresses() {
-        if (mainFrame == null || mainFrame.getCurrentCustomer() == null) {
+        if (mainPanel.getMainFrame() == null || mainPanel.getCurrentCustomer() == null) {
             return new String[]{"No addresses available"};
         }
-        ArrayList<Address> addresses = mainFrame.getCurrentCustomer().getAddresses();
+        ArrayList<Address> addresses = mainPanel.getCurrentCustomer().getAddresses();
         if (addresses == null || addresses.isEmpty()) {
             return new String[]{"No addresses available"};
         }

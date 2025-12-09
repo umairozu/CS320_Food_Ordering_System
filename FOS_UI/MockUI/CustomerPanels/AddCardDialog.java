@@ -1,6 +1,7 @@
-package FOS_UI.MockUI;
+package FOS_UI.MockUI.CustomerPanels;
 
 import FOS_CORE.*;
+import FOS_UI.MockUI.MainFrame;
 
 import javax.swing.*;
 import java.sql.Date;
@@ -61,7 +62,7 @@ public class AddCardDialog extends JDialog {
         }
 
         addedCard = new Card(number, holderName, expiryDate, cvvCode);
-        Customer currentCustomer = ((MainFrame) owner.getOwner()).getCurrentCustomer();
+        Customer currentCustomer = ((MainFrame) owner.getOwner()).getCustomerMainPanel().getCurrentCustomer();
         accountService.addCardToCustomer(currentCustomer, addedCard);
 
         JOptionPane.showMessageDialog(this, "Card added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);

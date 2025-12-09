@@ -1,18 +1,17 @@
-package FOS_UI.MockUI;
+package FOS_UI.MockUI.CustomerPanels;
 
 import FOS_CORE.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 
 public class PhoneNumbersPanel extends JPanel {
-    private MainFrame mainFrame;
+    private CustomerMainPanel mainPanel;
     private AccountDetailsPanel accountDetailsPanel;
     private JPanel phoneNumbersPanel;
 
-    public PhoneNumbersPanel(MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
+    public PhoneNumbersPanel(CustomerMainPanel mainPanel) {
+        this.mainPanel = mainPanel;
         initComponents();
     }
 
@@ -21,7 +20,7 @@ public class PhoneNumbersPanel extends JPanel {
 
         JPanel topPanel = new JPanel(new BorderLayout());
         JButton backButton = new JButton("Back to Profile");
-        backButton.addActionListener(e -> mainFrame.showAccountDetails());
+        backButton.addActionListener(e -> mainPanel.showAccountDetails());
         topPanel.add(backButton, BorderLayout.WEST);
         JLabel titleLabel = new JLabel("Phone Numbers");
         titleLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
@@ -37,7 +36,7 @@ public class PhoneNumbersPanel extends JPanel {
 
     public void refresh(){
         phoneNumbersPanel.removeAll();
-        Customer customer = mainFrame.getCurrentCustomer();
+        Customer customer = mainPanel.getCurrentCustomer();
         if(customer == null){
             phoneNumbersPanel.add(new JLabel("Please log in to view phone numbers."));
         } else {
@@ -78,7 +77,7 @@ public class PhoneNumbersPanel extends JPanel {
     }
 
     private void removeButtonAction(String phoneNumber){
-        mainFrame.getAccountService().removePhoneNumber(mainFrame.getCurrentCustomer(), phoneNumber);
+        mainPanel.getMainFrame().getAccountService().removePhoneNumber(mainPanel.getCurrentCustomer(), phoneNumber);
         refresh();
     }
 }

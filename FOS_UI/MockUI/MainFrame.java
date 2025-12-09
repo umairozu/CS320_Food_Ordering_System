@@ -1,116 +1,27 @@
 package FOS_UI.MockUI;
 
 import FOS_CORE.*;
-import FOS_UI.ManagerDashboardWindow;
+import FOS_UI.MockUI.CustomerPanels.*;
+import FOS_UI.MockUI.ManagerPanels.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
 public class MainFrame extends JFrame {
-    private Customer currentCustomer;
-    private Manager currentManager;
-    private RestaurantService restaurantService;
-    private CartService cartService;
-    private OrderService orderService;
     private AccountService accountService;
+    private CustomerMainPanel customerMainPanel;
+    private ManagerMainPanel managerMainPanel;
 
-    private JPanel mainPanel;
-    private CardLayout cardLayout;
-    private CustomerRestaurantListPanel customerRestaurantListPanel;
-    private RestaurantMenuPanel menuPanel;
-    private CartPanel cartPanel;
-    private OrderHistoryPanel orderHistoryPanel;
-    private AccountDetailsPanel accountDetailsPanel;
-    private PhoneNumbersPanel phoneNumbersPanel;
-    private AddressesPanel addressesPanel;
-    private CardsPanel cardsPanel;
-    private ManagerRestaurantListPanel managerRestaurantListPanel;
 
 
     public MainFrame() {
         super("Food Ordering System");
-        restaurantService = new RestaurantService();
-        cartService = new CartService();
-        orderService = new OrderService();
         accountService = new AccountService();
         showLogin();
-    }
-
-    private void initComponentsCustomer() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(900, 700);
         setLocationRelativeTo(null);
-
-        cardLayout = new CardLayout();
-        mainPanel = new JPanel(cardLayout);
-        ArrayList<String> customerAddresses = new ArrayList<>();
-        ArrayList<String> customerCities = new ArrayList<>();
-        for (Address address : currentCustomer.getAddresses()){
-            customerAddresses.add(address.toString());
-            customerCities.add(address.getCity());
-        }
-        customerRestaurantListPanel = new CustomerRestaurantListPanel(this);
-        menuPanel = new RestaurantMenuPanel(this);
-        cartPanel = new CartPanel(this);
-        orderHistoryPanel = new OrderHistoryPanel(this);
-        accountDetailsPanel = new AccountDetailsPanel(this);
-        phoneNumbersPanel = new PhoneNumbersPanel(this);
-        addressesPanel = new AddressesPanel(this);
-        cardsPanel = new CardsPanel(this);
-
-        mainPanel.add(customerRestaurantListPanel, "RESTAURANTS");
-        mainPanel.add(menuPanel, "MENU");
-        mainPanel.add(cartPanel, "CART");
-        mainPanel.add(orderHistoryPanel, "ORDERS");
-        mainPanel.add(accountDetailsPanel, "ACCOUNT DETAILS");
-        mainPanel.add(phoneNumbersPanel, "PHONE NUMBERS");
-        mainPanel.add(addressesPanel, "ADDRESSES");
-        mainPanel.add(cardsPanel, "CARDS");
-
-        add(mainPanel, BorderLayout.CENTER);
-
-        JMenuBar menuBar = new JMenuBar();
-        JMenu menu = new JMenu("Menu");
-        JMenuItem restaurantsItem = new JMenuItem("Restaurants");
-        JMenuItem cartItem = new JMenuItem("Cart");
-        JMenuItem accountItem = new JMenuItem("Account Details");
-        JMenuItem logoutItem = new JMenuItem("Logout");
-
-        restaurantsItem.addActionListener(e -> showRestaurants());
-        cartItem.addActionListener(e -> showCart());
-        accountItem.addActionListener(e -> showAccountDetails());
-        logoutItem.addActionListener(e -> logout());
-
-        menu.add(restaurantsItem);
-        menu.add(cartItem);
-        menu.add(accountItem);
-        menu.addSeparator();
-        menu.add(logoutItem);
-        menuBar.add(menu);
-        setJMenuBar(menuBar);
-    }
-    private void initComponentsManager() {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(900, 700);
-        setLocationRelativeTo(null);
-
-        cardLayout = new CardLayout();
-        mainPanel = new JPanel(cardLayout);
-        managerRestaurantListPanel = new ManagerRestaurantListPanel(this);
-
-        mainPanel.add(managerRestaurantListPanel, "MANAGER RESTAURANTS");
-
-        add(mainPanel, BorderLayout.CENTER);
-
-        JMenuBar menuBar = new JMenuBar();
-        JMenu menu = new JMenu("Menu");
-        JMenuItem logoutItem = new JMenuItem("Logout");
-
-        logoutItem.addActionListener(e -> logout());
-        menu.add(logoutItem);
-        menuBar.add(menu);
-        setJMenuBar(menuBar);
     }
 
     // java
@@ -119,88 +30,18 @@ public class MainFrame extends JFrame {
         loginDialog.setVisible(true);
         User user = loginDialog.getLoggedInUser();
         if (user instanceof Customer) {
-            currentCustomer = (Customer) user;
-            initComponentsCustomer();
-            showRestaurants();
+            Customer currentCustomer = (Customer) user;
+            customerMainPanel = new CustomerMainPanel(this, currentCustomer);
+            add(customerMainPanel, BorderLayout.CENTER);
             setVisible(true);
         } else if (user instanceof Manager) {
-            currentManager = (Manager) user;
-            initComponentsManager();
-            showManagerRestaurants();
-            setVisible(true);
+            Manager currentManager = (Manager) user;
+            managerMainPanel = new ManagerMainPanel(this, currentManager);
+            add(managerMainPanel, BorderLayout.CENTER);
             setVisible(true);
         } else {
             System.exit(0);
         }
-    }
-
-    public void showRestaurants() {
-        if (currentCustomer == null) {
-            showLogin();
-            return;
-        }
-        customerRestaurantListPanel.refresh();
-        cardLayout.show(mainPanel, "RESTAURANTS");
-    }
-
-    public void showMenu(Restaurant restaurant) {
-        if (currentCustomer == null) {
-            showLogin();
-            return;
-        }
-        menuPanel.setRestaurant(restaurant);
-        cardLayout.show(mainPanel, "MENU");
-    }
-
-    public void showCart() {
-        if (currentCustomer == null) {
-            showLogin();
-            return;
-        }
-        cartPanel.refresh();
-        cardLayout.show(mainPanel, "CART");
-    }
-
-    public void showOrderHistory() {
-        if (currentCustomer == null) {
-            showLogin();
-            return;
-        }
-        orderHistoryPanel.refresh();
-        cardLayout.show(mainPanel, "ORDERS");
-    }
-
-    public void showAccountDetails() {
-        if (currentCustomer == null) {
-            showLogin();
-            return;
-        }
-        accountDetailsPanel.refresh();
-        cardLayout.show(mainPanel, "ACCOUNT DETAILS");
-    }
-
-    public void showPhoneNumbers() {
-        phoneNumbersPanel.refresh();
-        cardLayout.show(mainPanel, "PHONE NUMBERS");
-    }
-
-    public void showAddresses() {
-        addressesPanel.refresh();
-        cardLayout.show(mainPanel, "ADDRESSES");
-    }
-
-    public void showCards() {
-        cardsPanel.refresh();
-        cardLayout.show(mainPanel, "CARDS");
-    }
-
-        public void showManagerRestaurants() {
-        if (currentManager == null) {
-            showLogin();
-            return;
-        }
-        managerRestaurantListPanel.refresh();
-        cardLayout.show(mainPanel, "MANAGER RESTAURANTS");
     }
 
     public void logout() {
@@ -209,38 +50,14 @@ public class MainFrame extends JFrame {
         this.getContentPane().removeAll();
         showLogin();
     }
-
-    public Customer getCurrentCustomer() {
-        return currentCustomer;
-    }
-
-    public RestaurantService getRestaurantService() {
-        return restaurantService;
-    }
-
-    public CartService getCartService() {
-        return cartService;
-    }
-
-    public OrderService getOrderService() {
-        return orderService;
-    }
-    public RestaurantMenuPanel getMenuPanel() {
-        return menuPanel;
-    }
-    public CartPanel getCartPanel() {
-        return cartPanel;
-    }
-    public CustomerRestaurantListPanel getRestaurantListPanel() {
-        return customerRestaurantListPanel;
-    }
-    public ManagerService getManagerService() {
-        return new ManagerService();
-    }
-    public Manager getCurrentManager() {
-        return currentManager;
-    }
     public AccountService getAccountService() {
         return accountService;
+    }
+    public CustomerMainPanel getCustomerMainPanel() {
+        return customerMainPanel;
+    }
+
+    public ManagerMainPanel getManagerMainPanel() {
+        return managerMainPanel;
     }
 }
