@@ -23,12 +23,9 @@ public class MainFrame extends JFrame {
     private OrderHistoryPanel orderHistoryPanel;
     private AccountDetailsPanel accountDetailsPanel;
     private PhoneNumbersPanel phoneNumbersPanel;
-<<<<<<< HEAD
     private AddressesPanel addressesPanel;
     private CardsPanel cardsPanel;
-=======
     private ManagerRestaurantListPanel managerRestaurantListPanel;
->>>>>>> 6eefb329bf498a143328c0edf98b324a5932443e
 
 
     public MainFrame() {
@@ -187,7 +184,6 @@ public class MainFrame extends JFrame {
         cardLayout.show(mainPanel, "PHONE NUMBERS");
     }
 
-<<<<<<< HEAD
     public void showAddresses() {
         addressesPanel.refresh();
         cardLayout.show(mainPanel, "ADDRESSES");
@@ -196,15 +192,15 @@ public class MainFrame extends JFrame {
     public void showCards() {
         cardsPanel.refresh();
         cardLayout.show(mainPanel, "CARDS");
-=======
-    public void showManagerRestaurants() {
+    }
+
+        public void showManagerRestaurants() {
         if (currentManager == null) {
             showLogin();
             return;
         }
         managerRestaurantListPanel.refresh();
         cardLayout.show(mainPanel, "MANAGER RESTAURANTS");
->>>>>>> 6eefb329bf498a143328c0edf98b324a5932443e
     }
 
     public void logout() {
