@@ -119,7 +119,7 @@ public class RegisterDialog extends JDialog {
             accountService.createCustomerAccount(email, phone, password, address);
 
             this.registeredUser = (Customer) accountService.login(email, password);
-            JOptionPane.showMessageDialog(this, "Registration successful! Please log in.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Registration successful! We are signing you in.", "Success", JOptionPane.INFORMATION_MESSAGE);
             dispose();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Registration failed: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

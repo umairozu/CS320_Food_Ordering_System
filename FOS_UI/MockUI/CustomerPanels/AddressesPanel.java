@@ -26,6 +26,10 @@ public class AddressesPanel extends JPanel {
         JLabel titleLabel = new JLabel("Addresses");
         titleLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        JButton addButton = new JButton("Add Address");
+        addButton.setBackground(Color.green);
+        addButton.addActionListener(e -> addButtonAction());
+        topPanel.add(addButton, BorderLayout.EAST);
         topPanel.add(titleLabel, BorderLayout.CENTER);
         add(topPanel, BorderLayout.NORTH);
 
@@ -77,6 +81,15 @@ public class AddressesPanel extends JPanel {
         return card;
     }
 
+    private void addButtonAction(){
+        AddAddressDialog dialog = new AddAddressDialog(mainPanel);
+        dialog.setVisible(true);
+
+        Address added = dialog.getAddedAddress();
+        if(added != null){
+            refresh();
+        }
+    }
     private void removeButtonAction(Address address){
         mainPanel.getMainFrame().getAccountService().removeAddress(mainPanel.getCurrentCustomer(), address);
         refresh();

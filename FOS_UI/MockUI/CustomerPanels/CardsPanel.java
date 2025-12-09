@@ -26,6 +26,10 @@ public class CardsPanel extends JPanel {
         JLabel titleLabel = new JLabel("Cards");
         titleLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        JButton addButton = new JButton("Add Card");
+        addButton.setBackground(Color.green);
+        topPanel.add(addButton, BorderLayout.EAST);
+        addButton.addActionListener(e -> addButtonAction());
         topPanel.add(titleLabel, BorderLayout.CENTER);
         add(topPanel, BorderLayout.NORTH);
 
@@ -76,9 +80,23 @@ public class CardsPanel extends JPanel {
 
         return Jcard;
     }
+    private void addButtonAction() {
+        AddCardDialog dialog = new AddCardDialog(mainPanel);
+        Card added = dialog.getAddedCard();
+        if (added != null) {
+            refresh();
+        }
+    }
+    private void removeButtonAction(Card card) {
+        Customer customer = mainPanel.getCurrentCustomer();
+        if (customer == null) return;
 
-    private void removeButtonAction(Card card){
-        mainPanel.getMainFrame().getAccountService().removeCard(mainPanel.getCurrentCustomer(), card);
+        mainPanel.getMainFrame().getAccountService().removeCard(customer, card);
+
+        if (customer.getCards() != null) {
+            customer.getCards().remove(card);
+        }
+
         refresh();
     }
 }

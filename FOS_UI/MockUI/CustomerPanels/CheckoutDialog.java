@@ -124,7 +124,7 @@ public class CheckoutDialog extends JDialog {
     }
 
     private void addCard() {
-        AddCardDialog addCardDialog = new AddCardDialog(this);
+        AddCardDialog addCardDialog = new AddCardDialog(this.mainPanel);
         Card newCard = addCardDialog.getAddedCard();
         if (newCard != null) {
             cardComboBox.addItem(newCard);

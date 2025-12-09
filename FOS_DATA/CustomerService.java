@@ -124,7 +124,7 @@ public class CustomerService extends UserData implements ICustomerService {
         int customerId = customer.getUserID();
         String sql = "INSERT INTO Address (customer_id, address_line, city, state, zip) VALUES (?, ?, ?, ?, ?)";
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, customerId);
             statement.setString(2, address.getAddressLine());
             statement.setString(3, address.getCity());

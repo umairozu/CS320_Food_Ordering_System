@@ -7,20 +7,24 @@ import javax.swing.*;
 import java.sql.Date;
 
 public class AddCardDialog extends JDialog {
-    private JDialog owner;
+    private CustomerMainPanel mainPanel;
     private JTextField cardNumber;
     private JTextField cardHolderName;
     private JFormattedTextField expiryDate;
     private JTextField cvv;
     private AccountService accountService = new AccountService();
     private Card addedCard;
-    public AddCardDialog(JDialog owner) {
-        super(owner, "Add New Card", true);
-        this.owner = owner;
+
+    public AddCardDialog(CustomerMainPanel mainPanel) {
+        super(mainPanel.getMainFrame(), "Add New Card", true);
+        this.mainPanel = mainPanel;
+        this.accountService = mainPanel.getMainFrame().getAccountService();
+
         initComponents();
         pack();
-        setLocationRelativeTo(owner);
+        setLocationRelativeTo(mainPanel.getMainFrame());
     }
+
     private void initComponents() {
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
@@ -42,7 +46,7 @@ public class AddCardDialog extends JDialog {
         addButton.addActionListener(e -> {onAddCard();});
         add(addButton);
         pack();
-        setLocationRelativeTo(owner);
+        setLocationRelativeTo(mainPanel.getMainFrame());
         setVisible(true);
 
     }
@@ -61,7 +65,7 @@ public class AddCardDialog extends JDialog {
         }
 
         addedCard = new Card(number, holderName, expiryDate, cvvCode);
-        Customer currentCustomer = ((MainFrame) owner.getOwner()).getCustomerMainPanel().getCurrentCustomer();
+        Customer currentCustomer = mainPanel.getCurrentCustomer();
         accountService.addCardToCustomer(currentCustomer, addedCard);
 
         JOptionPane.showMessageDialog(this, "Card added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
